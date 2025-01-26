@@ -1,0 +1,27 @@
+.gradient-brand {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.hero-section {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+@media (min-width: 992px) {
+    .navbar {
+        padding: 1rem 0;
+    }
+    
+    .hero-section {
+        padding: 6rem 0;
+    }
+}
