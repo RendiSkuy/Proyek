@@ -18,6 +18,7 @@ class TukarPoinResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left';
     protected static ?string $navigationGroup = 'Bank Sampah';
+    protected static ?string $pluralLabel = 'Data Tukar Poin';
 
     public static function form(Forms\Form $form): Forms\Form
     {

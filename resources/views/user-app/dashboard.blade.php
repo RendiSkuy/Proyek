@@ -1,148 +1,192 @@
-@extends('layout.main')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobile-friendly -->
+    <title>@yield('title')</title>
 
-@section('title', 'User Dashboard | Bank Hijau Antapani')
+    <!-- Bootstrap & FontAwesome -->
+    <link href="{{ asset('we-cycle-app/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
-@section('content')
-<header class="dashboard-header gradient-top-bottom">
-    <div class="header-user">
-        <div class="container text-center px-4">
-            <img class="mt-2" src="{{ asset('images/logo-hero.png') }}" alt="we-cycle-logo" srcset="">
-            <div class="row mt-4 ">
-                <div class="col d-flex justify-content-between text-start text-light">
-                    <div class="text">
-                        <p style="font-weight: 600; letter-spacing: 1px;">
-                            Hi,<br>
-                            {{ $user->username }}
-                        </p>
-                    </div>
-                    <div class="profile">
-                        <img src="{{ $user->picture ?? asset('images/profile3.png') }}" alt="profile"
-                            style="width: 48px; height:48px;" class="rounded-circle">
-                    </div>
-                </div>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #1E90FF, #2ECC71);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .dashboard-container {
+            padding: 20px;
+            max-width: 480px;
+            margin: 0 auto;
+            background: #F9F9F9;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #1E90FF, #2ECC71);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-top: 10px;
+        }
+
+        .summary-cards {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .summary-card {
+            flex: 1;
+            background: white;
+            text-align: center;
+            padding: 15px;
+            margin: 0 5px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-card h4 {
+            margin: 0;
+            color: #1E90FF;
+        }
+
+        .summary-card p {
+            margin: 5px 0 0;
+            color: #555;
+        }
+
+        .action-button {
+            background: #2ECC71;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            display: block;
+            margin: 0 auto;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-history {
+            margin-top: 20px;
+        }
+
+        .transaction-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .navigation-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button {
+            text-align: center;
+            text-decoration: none;
+            color: #1E90FF;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .nav-button i {
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-header">
+        <h1>Hi, {{ $nasabah->name }}</h1>
+        <p>ID Nasabah: {{ $nasabah->id }}</p>
+        <img src="{{ $user->picture ?? asset('images/profile3.png') }}" alt="profile">
+    </div>
+
+    <div class="dashboard-container">
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h4>{{ $point->jumlah ?? '0' }}</h4>
+                <p>Points</p>
             </div>
-            <div class="row mt-4 mx-3 py-2 rounded-pill bg-light">
-                <div class="col">
-                    <p class="m-0 fw-bold">{{ $point->total_points }}</p>
-                    <p class="m-0 font-sm">Points</p>
-                </div>
-                <div class="col border-start border-end border-2">
-                    <p class="m-0 fw-bold">
-                        {{ $transactions->sum('total_income') }}
-                    </p>
-                    <p class="m-0 font-sm">Profit</p>
-                </div>
-                <div class="col">
-                    <p class="m-0 fw-bold">{{ $tukar_poin}}</p>
-                    <p class="m-0 font-sm">Reward</p>
-                </div>
+            <div class="summary-card">
+                <h4>Rp. {{ number_format($transactions->sum('total_income'), 0, ',', '.') }}</h4>
+                <p>Profit</p>
+            </div>
+            <div class="summary-card">
+                <h4>{{ $tukar_poin }}</h4>
+                <p>Reward</p>
             </div>
         </div>
-    </div>
-</header>
-<main id="dashboard-page" class="main-container">
-    <div class="container pt-4 px-5">
-        <a href="/tukar-poin" class="card rounded-4 mb-1 landing-card-shadow border-light"
-            style="background-color: #0575E6 ">
-            <div class="row g-0">
-                <div class="col-3 d-flex justify-content-center align-items-center text-center">
-                    <img class="max-w-100" src="{{ asset('images/icons/gift-light.png') }}"
-                        class="img-fluid rounded-start" alt="reward">
+
+        <a href="/rewards" class="action-button">Tukar Poinmu Sekarang!</a>
+
+        <div class="transaction-history">
+            <h5>Riwayat Transaksi</h5>
+            @foreach ($transactions as $transaction)
+            <div class="transaction-item">
+                <div>
+                    <p><strong>Setoran Sampah:</strong> {{ $transaction->point_received }} Poin</p>
+                    <p>Total: {{ $transaction->total_weight }} Kg</p>
                 </div>
-                <div class="col-9 d-flex align-items-center px-2 py-3">
-                    <div class="card-body text-light">
-                        <h6 class="card-title fw-bold mb-0">
-                            Tukar Poinmu Sekarang!
-                        </h6>
-                    </div>
+                <div>
+                    <p>Pendapatan:</p>
+                    <p>Rp. {{ number_format($transaction->total_income, 0, ',', '.') }}</p>
                 </div>
             </div>
+            @endforeach
+        </div>
+    </div>
+
+    <div class="navigation-menu">
+        <a href="/dashboard" class="nav-button">
+            <i class="fas fa-home"></i>
+            <p>Beranda</p>
+        </a>
+        <a href="/kategori-sampah" class="nav-button">
+            <i class="fas fa-recycle"></i>
+            <p>Kategori</p>
+        </a>
+        <a href="/profile" class="nav-button">
+            <i class="fas fa-user"></i>
+            <p>Profil</p>
+        </a>
+        <a href="/settings" class="nav-button">
+            <i class="fas fa-cog"></i>
+            <p>Pengaturan</p>
         </a>
     </div>
-    <section class="container mt-4 pb-4">
-        <div class="d-flex justify-content-between mx-3">
-            <h6 class="fw-bold">
-                Riwayat Transaksi
-            </h6>
-            <a class="text-dark fs-6" href="/history/transaction">
-                Lihat Semua
-            </a>
-        </div>
-        @if (isset($transactions) || !empty($transactions))
-        @forelse ($transactions as $transaction)
-        <div class="mt-3 mx-1">
-            <div class="card border-0 shadow mb-2">
-                <div class="card-body">
-                    <div class="row d-flex align-items-center">
-                        <div class="col-7 text-start">
-                            <p class="mb-0 fw-bold">
-                                Setoran Sampah
-                                <span class="rounded-pill text-light bg-green-main px-2 fw-bold">
-                                    {{ $transaction->point_received }}
-                                </span>
-                            </p>
-                            <p class="mb-0">
-                                Total:
-                                <span class="fw-bold" style="color: #0575E6">
-                                    {{ $transaction->total_weight }} Kg
-                                </span>
-                            </p>
-                            <p class="mb-0 font-sm text-muted">
-                                {{ $transaction->created_at }}
-                            </p>
-                        </div>
-                        <div class="col-5 text-end">
-                            <p class="mb-0 fw-bold">
-                                Pendapatan
-                            </p>
-                            <p class="mb-0 pe-3 text-secondary fw-bold">
-                                Rp. {{$transaction->total_income}}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @empty
-        <div class="mt-3 mx-1">
-            <div class="card p-2 border-0 shadow mb-2">
-                <h5 class="text-center text-danger">
-                    Anda belum pernah melakukan transaksi.
-                </h5>
-            </div>
-        </div>
-        @endforelse
-        @endif
-
-    </section>
-    {{-- NAVIGATION MENU --}}
-    <div class="navigation-menu">
-        <div class="container d-flex justify-content-evenly">
-            <div>
-                <a class="btn btn-lg border-0 px-1 py-auto" href="/dashboard">
-                    <i class="bi bi-house" style="font-size: 1.5rem; color:#0575E6;"></i>
-                    <p class="text-dark fw-bold font-sm p-0 m-0">Beranda</p>
-                </a>
-            </div>
-            <div>
-                <a class="btn btn-lg border-0 px-1 py-auto" href="/kategori-sampah">
-                    <i class="bi bi-trash" style="font-size: 1.5rem; color:#0575E6;"></i>
-                    <p class="text-dark fw-bold font-sm p-0 m-0">Kategori</p>
-                </a>
-            </div>
-            <div>
-                <a class="btn btn-lg border-0 px-1 py-auto" href="/profile">
-                    <i class="bi bi-person" style="font-size: 1.5rem; color:#0575E6;"></i>
-                    <p class="text-dark fw-bold font-sm p-0 m-0">Profil</p>
-                </a>
-            </div>
-            <div>
-                <a class=" btn btn-lg border-0 px-1 py-auto" href="/settings" role="button">
-                    <i class="bi bi-gear" style="font-size: 1.5rem; color:#0575E6;"></i>
-                    <p class="text-dark fw-bold font-sm p-0 m-0">Pengaturan</p>
-                </a>
-            </div>
-        </div>
-    </div>
-</main>
-@endsection
+</body>
+</html>

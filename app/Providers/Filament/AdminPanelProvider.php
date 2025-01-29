@@ -27,8 +27,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('Bank Sampah Hijau') // Mengubah nama Laravel
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => '#008000', // Warna hijau (kode warna HEX)
+                'secondary' => '#0000FF', // Warna biru untuk elemen tambahan
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

@@ -17,6 +17,7 @@ class NasabahResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
     protected static ?string $navigationGroup = 'Nasabah';
+    protected static ?string $pluralLabel = 'Nasabah';
     protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form

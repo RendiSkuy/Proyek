@@ -15,6 +15,7 @@ class SampahResource extends Resource
     protected static ?string $model = Sampah::class;
     protected static ?string $navigationIcon = 'heroicon-o-trash';
     protected static ?string $navigationGroup = 'Master Data';
+    protected static ?string $pluralLabel = 'Data Sampah';
 
     public static function form(Form $form): Form
 {

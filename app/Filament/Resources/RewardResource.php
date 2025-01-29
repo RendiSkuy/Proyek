@@ -25,7 +25,7 @@ class RewardResource extends Resource
     protected static ?int $navigationSort = 3;
 
     protected static ?string $label = 'Reward';
-    protected static ?string $pluralLabel = 'Data Rewards';
+    protected static ?string $pluralLabel = 'Data Reward';
 
     public static function form(Form $form): Form
     {

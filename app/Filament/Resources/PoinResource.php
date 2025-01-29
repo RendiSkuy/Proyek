@@ -23,6 +23,7 @@ class PoinResource extends Resource
     protected static ?string $model = Poin::class;
     protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
     protected static ?string $navigationGroup = 'Poin';
+    protected static ?string $pluralLabel = 'Poin';
 
     public static function form(Form $form): Form
     {

@@ -12,9 +12,12 @@ use Filament\Tables\Table;
 
 class KategoriSampahResource extends Resource
 {
+    
     protected static ?string $model = KategoriSampah::class;
     protected static ?string $navigationIcon = 'heroicon-o-trash';
     protected static ?string $navigationGroup = 'Master Data';
+    protected static ?string $pluralLabel = 'Data Kategori Sampah';
+    protected static ?string $label = 'Kategori Sampah';
 
     public static function form(Form $form): Form
     {

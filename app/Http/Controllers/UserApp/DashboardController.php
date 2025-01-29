@@ -17,26 +17,39 @@ class DashboardController extends Controller
     {
         // Mendapatkan data user yang sedang login
         $user = Auth::user();
-
+        
         // Mencari data nasabah terkait user
         $nasabah = Nasabah::where('user_id', $user->id)->first();
-
+        
         if (!$nasabah) {
             return redirect()->route('login')->with('error', 'Data nasabah tidak ditemukan.');
         }
-
-        // Mengambil poin nasabah
+        
+        // Mengambil poin nasabah berdasarkan nasabah_id
         $point = Poin::where('nasabah_id', $nasabah->id)->first();
-
+        
+        // Jika point tidak ditemukan, buat object kosong dengan nilai default
+        if (!$point) {
+            $point = new \stdClass();
+            $point->id = 0;
+            $point->jumlah = 0;
+        }
+        
         // Mengambil transaksi terakhir (3 transaksi terakhir)
         $transactions = Transaksi::where('nasabah_id', $nasabah->id)
             ->latest()
             ->limit(3)
             ->get();
-
+        
         // Menghitung total reward yang sudah digunakan
         $tukar_poin = $transactions->sum('point_received');
-
-        return view('user-app.dashboard', compact('user', 'point', 'transactions', 'tukar_poin'));
+        
+        return view('user-app.dashboard', compact(
+            'user',
+            'nasabah',
+            'point',
+            'transactions',
+            'tukar_poin'
+        ));
     }
 }
