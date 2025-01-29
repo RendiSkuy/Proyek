@@ -2,104 +2,113 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TransaksiResource\Pages;
 use App\Models\Transaksi;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\TransaksiResource\Pages;
 
 class TransaksiResource extends Resource
 {
     protected static ?string $model = Transaksi::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
     protected static ?string $navigationGroup = 'Transaksi';
-    protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
                 Forms\Components\Card::make()
                     ->schema([
-                        Forms\Components\Select::make('user_id')
-                            ->relationship('nasabah', 'nama')
+                        Forms\Components\Select::make('nasabah_id')
                             ->label('Nasabah')
+                            ->relationship('nasabah', 'nama')
                             ->required()
                             ->searchable(),
+    
                         Forms\Components\TextInput::make('kode_transaksi')
                             ->label('Kode Transaksi')
-                            ->required()
-                            ->unique(ignorable: fn ($record) => $record)
-                            // ->disabled()
-                            ->dehydrated(),
+                            ->default(fn () => 'TRX-' . now()->format('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(6)))
+                            ->disabled(),
+    
                         Forms\Components\DatePicker::make('tanggal')
                             ->label('Tanggal')
+                            ->default(now()->format('Y-m-d'))
                             ->required(),
+    
                         Forms\Components\Repeater::make('details')
                             ->label('Detail Transaksi')
                             ->relationship()
                             ->schema([
                                 Forms\Components\Select::make('sampah_id')
-                                    ->relationship('sampah', 'nama')
                                     ->label('Jenis Sampah')
+                                    ->relationship('sampah', 'nama')
                                     ->required()
-                                    ->reactive(),
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, $set, $get) {
+                                        $sampah = \App\Models\Sampah::find($state);
+                                        $berat = $get('berat') ?? 0;
+    
+                                        if ($sampah) {
+                                            $set('harga', $sampah->harga_per_kg * $berat);
+                                            $set('poin', $sampah->poin_per_kg * $berat);
+                                        }
+                                    }),
+    
                                 Forms\Components\TextInput::make('berat')
                                     ->label('Berat (Kg)')
-                                    ->required()
                                     ->numeric()
-                                    ->reactive(),
+                                    ->required()
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, $set, $get) {
+                                        $sampah = \App\Models\Sampah::find($get('sampah_id'));
+    
+                                        if ($sampah) {
+                                            $set('harga', $sampah->harga_per_kg * $state);
+                                            $set('poin', $sampah->poin_per_kg * $state);
+                                        }
+                                    }),
+    
                                 Forms\Components\TextInput::make('harga')
                                     ->label('Harga (Rp)')
-                                    ->disabled()
-                                    ->dehydrated(),
+                                    ->reactive(),
+    
                                 Forms\Components\TextInput::make('poin')
                                     ->label('Poin')
-                                    ->disabled()
-                                    ->dehydrated(),
+                                    ->reactive(),
                             ])
                             ->columns(4),
+    
                         Forms\Components\Textarea::make('keterangan')
                             ->label('Keterangan')
                             ->maxLength(65535),
+    
                         Forms\Components\Select::make('status')
                             ->label('Status')
                             ->options([
                                 'sedang di proses' => 'Sedang Diproses',
                                 'selesai' => 'Selesai',
                             ])
-                            ->required()
-                    ])
+                            ->default('sedang di proses')
+                            ->required(),
+                    ]),
             ]);
     }
+    
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('kode_transaksi')
-                    ->label('Kode Transaksi')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Nasabah')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('tanggal')
-                    ->label('Tanggal')
-                    ->date(),
-                Tables\Columns\TextColumn::make('total_berat')
-                    ->label('Total Berat (Kg)'),
-                Tables\Columns\TextColumn::make('total_harga')
-                    ->label('Total Harga (Rp)')
-                    ->money('idr'),
-                Tables\Columns\TextColumn::make('total_poin')
-                    ->label('Total Poin'),
+                Tables\Columns\TextColumn::make('kode_transaksi')->label('Kode Transaksi'),
+                Tables\Columns\TextColumn::make('nasabah.nama')->label('Nasabah'),
+                Tables\Columns\TextColumn::make('tanggal')->label('Tanggal')->date(),
+                Tables\Columns\TextColumn::make('total_berat')->label('Total Berat (Kg)'),
+                Tables\Columns\TextColumn::make('total_harga')->label('Total Harga (Rp)')->money('idr'),
+                Tables\Columns\TextColumn::make('total_poin')->label('Total Poin'),
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Status')
-                    // Remove enum() and use custom logic for colors
-                    ->getStateUsing(fn ($record) => $record->status)
                     ->colors([
                         'warning' => 'sedang di proses',
                         'success' => 'selesai',
@@ -120,13 +129,6 @@ class TransaksiResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

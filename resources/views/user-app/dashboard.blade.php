@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'User Dashboard | We-Cycle')
+@section('title', 'User Dashboard | Bank Hijau Antapani')
 
 @section('content')
 <header class="dashboard-header gradient-top-bottom">

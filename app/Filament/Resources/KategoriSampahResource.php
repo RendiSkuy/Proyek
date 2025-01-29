@@ -7,51 +7,42 @@ use App\Models\KategoriSampah;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Table;
 
 class KategoriSampahResource extends Resource
 {
     protected static ?string $model = KategoriSampah::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-trash';
     protected static ?string $navigationGroup = 'Master Data';
-    protected static ?int $navigationSort = 1;
-
-    protected static ?string $label = 'Kategori Sampah';
-    protected static ?string $pluralLabel = 'Kategori Sampah';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()
-                    ->schema([
-                        Forms\Components\TextInput::make('nama_kategori') // Ubah ke 'nama_kategori'
-                            ->label('Nama Kategori')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true),
+                Forms\Components\TextInput::make('nama_kategori')
+                    ->label('Nama Kategori')
+                    ->required()
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true),
 
-                        Forms\Components\Textarea::make('deskripsi')
-                            ->label('Deskripsi')
-                            ->maxLength(65535),
+                Forms\Components\Textarea::make('deskripsi')
+                    ->label('Deskripsi')
+                    ->maxLength(65535),
 
-                        Forms\Components\Select::make('jenis')
-                            ->label('Jenis Sampah')
-                            ->options([
-                                'organik' => 'Organik',
-                                'anorganik' => 'Anorganik',
-                                'lainnya' => 'Lainnya',
-                            ])
-                            ->required(),
+                Forms\Components\Select::make('jenis')
+                    ->label('Jenis Sampah')
+                    ->options([
+                        'organik' => 'Organik',
+                        'anorganik' => 'Anorganik',
+                        'lainnya' => 'Lainnya',
+                    ])
+                    ->required(),
 
-                        Forms\Components\TextInput::make('poin_per_kg')
-                            ->label('Poin per Kilogram')
-                            ->numeric()
-                            ->required()
-                            ->helperText('Masukkan jumlah poin yang diperoleh per kilogram sampah.'),
-                    ]),
+                Forms\Components\TextInput::make('poin_per_kg')
+                    ->label('Poin per Kilogram')
+                    ->numeric()
+                    ->required(),
             ]);
     }
 
@@ -59,7 +50,7 @@ class KategoriSampahResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('kategori.nama_kategori') // Ubah ke 'nama_kategori'
+                Tables\Columns\TextColumn::make('nama_kategori')
                     ->label('Nama Kategori')
                     ->searchable()
                     ->sortable(),
@@ -71,10 +62,6 @@ class KategoriSampahResource extends Resource
                 Tables\Columns\TextColumn::make('poin_per_kg')
                     ->label('Poin per KG')
                     ->sortable(),
-
-                Tables\Columns\TextColumn::make('deskripsi')
-                    ->label('Deskripsi')
-                    ->limit(50),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -99,13 +86,6 @@ class KategoriSampahResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            // Relasi tambahan dapat ditambahkan di sini
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
@@ -115,3 +95,4 @@ class KategoriSampahResource extends Resource
         ];
     }
 }
+

@@ -11,6 +11,7 @@
         body {
             font-family: 'Arial', sans-serif;
             line-height: 1.6;
+            background-color: #f5f5f5;
         }
         .hero-section {
             height: 80vh;
@@ -18,11 +19,11 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: linear-gradient(135deg, #4CAF50, #2ECC71);
+            background: linear-gradient(135deg, #1E90FF, #2ECC71); /* Warna biru-hijau */
             color: white;
         }
         .hero-section h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: bold;
         }
         .hero-section p {
@@ -30,16 +31,17 @@
             margin-bottom: 20px;
         }
         .hero-section .btn {
-            background-color: #2ECC71;
+            background-color: #007BFF; /* Biru terang */
             color: white;
             border-radius: 30px;
             padding: 10px 25px;
+            font-weight: bold;
         }
         .hero-section .btn:hover {
-            background-color: #27AE60;
+            background-color: #0056b3; /* Biru gelap */
         }
         .features {
-            background-color: #F9F9F9;
+            background-color: #E8F5E9; /* Hijau pucat */
             padding: 60px 0;
         }
         .features h2 {
@@ -51,18 +53,26 @@
         .features .card {
             border: none;
             border-radius: 15px;
-            transition: transform 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: #fff;
         }
         .features .card:hover {
             transform: translateY(-10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
         .features .card i {
-            color: #2ECC71;
+            color: #1E90FF; /* Ikon biru */
             margin-bottom: 15px;
         }
+        .features .card h3 {
+            color: #27AE60; /* Hijau */
+        }
+        .features .card p {
+            color: #555;
+        }
         footer {
-            background-color: #2ECC71;
+            background-color: #1E90FF; /* Biru */
             color: white;
             padding: 20px 0;
         }
@@ -70,20 +80,30 @@
             margin: 0;
             font-size: 0.9rem;
         }
+        .navbar {
+            background: linear-gradient(135deg, #2ECC71, #1E90FF); /* Hijau-biru */
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .navbar .nav-link {
+            color: white;
+            font-weight: bold;
+        }
+        .navbar .nav-link:hover {
+            color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
     <header class="dashboard-header">
-        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #27AE60;">
+        <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand" href="#">Bank Hijau Antapani</a>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link" href="/login">Masuk</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/register">Daftar</a>
                         </li>
                     </ul>
                 </div>
@@ -93,9 +113,9 @@
 
     <div class="hero-section">
         <div class="container">
-            <h1 class="display-4">Selamat Datang di We-Cycle</h1>
-            <p>Aplikasi kami memungkinkan Anda menukar sampah dengan poin yang dapat ditukarkan dengan hadiah menarik.</p>
-            <a href="/register" class="btn btn-lg">Mulai Sekarang</a>
+            <h1 class="display-4">Selamat Datang di Bank Hijau Antapani</h1>
+            <p>Website kami memungkinkan Anda menukar sampah dengan poin yang dapat ditukarkan dengan hadiah menarik.</p>
+            <a href="/login" class="btn btn-lg">Mulai Sekarang</a>
         </div>
     </div>
 
@@ -132,7 +152,7 @@
 
     <footer class="text-center">
         <div class="container">
-            <p>&copy; 2024 We-Cycle. All rights reserved.</p>
+            <p>&copy; 2025 Bank Hijau Antapani. All rights reserved.</p>
         </div>
     </footer>
 

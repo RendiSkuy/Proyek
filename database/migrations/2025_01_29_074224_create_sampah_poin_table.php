@@ -7,16 +7,20 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up()
     {
-        Schema::create('poins', function (Blueprint $table) {
+        Schema::create('sampah_poin', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('nasabah_id')->constrained()->onDelete('cascade');
-            $table->integer('jumlah')->default(0);
+            $table->foreignId('poin_id')->constrained('poins')->onDelete('cascade');
+            $table->foreignId('sampah_id')->constrained('sampahs')->onDelete('cascade');
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('poins');
+        Schema::dropIfExists('sampah_poin');
     }
 };
+
+
+
+

@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PoinResource\Pages;
 use App\Models\Poin;
+use App\Models\KategoriSampah;
+use App\Models\Sampah;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -11,135 +13,83 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Components\Section;
+use Illuminate\Support\Facades\Log;
 
 class PoinResource extends Resource
 {
     protected static ?string $model = Poin::class;
     protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
-    protected static ?string $navigationGroup = 'Manajemen Data';
-    protected static ?string $label = 'Poin';
-    protected static ?string $pluralLabel = 'Poin';
+    protected static ?string $navigationGroup = 'Poin';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Select::make('nasabah_id')
-                    ->relationship('nasabah','nama') // Relasi ke model Nasabah, kolom 'nama'
-                    ->searchable()
-                    ->required()
-                    ->label('Nasabah'),
+                Section::make()
+                    ->schema([
+                        Select::make('nasabah_id')
+                            ->relationship('nasabah', 'nama')
+                            ->searchable()
+                            ->required()
+                            ->label('Nasabah'),
 
-                TextInput::make('nama_poin')
-                    ->label('Nama Poin')
-                    ->required()
-                    ->maxLength(255)
-                    ->reactive()
-                    ->afterStateUpdated(function ($state, callable $set) {
-                        $categories = [
-                            'plastik' => ['kategori' => 'anorganik', 'jumlah' => 10],
-                            'kertas' => ['kategori' => 'anorganik', 'jumlah' => 15],
-                            'kaca' => ['kategori' => 'anorganik', 'jumlah' => 20],
-                            'kompos' => ['kategori' => 'organik', 'jumlah' => 25],
-                            'logam' => ['kategori' => 'anorganik', 'jumlah' => 30],
-                            'baterai' => ['kategori' => 'elektronik', 'jumlah' => 50],
-                            'elektronik' => ['kategori' => 'elektronik', 'jumlah' => 50],
-                            'sisa makanan' => ['kategori' => 'organik', 'jumlah' => 20],
-                            'daun kering' => ['kategori' => 'organik', 'jumlah' => 15],
-                            'besi' => ['kategori' => 'anorganik', 'jumlah' => 40],
-                            'karton' => ['kategori' => 'anorganik', 'jumlah' => 10],
-                            'minyak jelantah' => ['kategori' => 'lainnya', 'jumlah' => 35],
-                            'kayu' => ['kategori' => 'lainnya', 'jumlah' => 15],
-                            'kaleng' => ['kategori' => 'anorganik', 'jumlah' => 30],
-                            'sisa sayur' => ['kategori' => 'organik', 'jumlah' => 20],
-                            'limbah medis' => ['kategori' => 'lainnya', 'jumlah' => 60],
-                            'pakaian bekas' => ['kategori' => 'lainnya', 'jumlah' => 25],
-                            'botol plastik' => ['kategori' => 'anorganik', 'jumlah' => 10],
-                            'stereofoam' => ['kategori' => 'anorganik', 'jumlah' => 5],
-                        ];
+                        Select::make('kategori_sampahs')
+                            ->label('Kategori Sampah')
+                            ->relationship('kategoriSampahs', 'nama_kategori')
+                            ->multiple()
+                            ->searchable()
+                            ->live()
+                            ->afterStateUpdated(fn($state, callable $set, callable $get) => self::hitungTotalPoin($set, $get)),
 
-                        $state = strtolower($state);
-                        if (isset($categories[$state])) {
-                            $set('kategori', $categories[$state]['kategori']);
-                            $set('jumlah', $categories[$state]['jumlah']);
-                        } else {
-                            $set('kategori', 'lainnya');
-                            $set('jumlah', 5);
-                        }
-                    }),
+                        Select::make('sampahs')
+                            ->label('Sampah')
+                            ->relationship('sampahs', 'nama')
+                            ->multiple()
+                            ->searchable()
+                            ->live()
+                            ->afterStateUpdated(fn($state, callable $set, callable $get) => self::hitungTotalPoin($set, $get)),
 
-                Textarea::make('deskripsi')
-                    ->label('Deskripsi')
-                    ->maxLength(500),
-
-                Select::make('kategori')
-                    ->label('Kategori Poin')
-                    ->options([
-                        'organik' => 'Organik',
-                        'anorganik' => 'Anorganik',
-                        'elektronik' => 'Elektronik',
-                        'lainnya' => 'Lainnya',
+                        TextInput::make('jumlah')
+                        ->label('Total Poin')
+                        ->numeric()
+                        ->required()
+                        ->default(0)
+                        ->readonly()  // Gunakan ini sebagai alternatif disabled()
+                        ->live(),
                     ])
-                    ->required()
-                    ->disabled(),
-
-                TextInput::make('jumlah')
-                    ->label('Jumlah Poin')
-                    ->numeric()
-                    ->required(),
             ]);
+    }
+
+    public static function hitungTotalPoin(callable $set, callable $get)
+    {
+        $kategoriIds = $get('kategori_sampahs') ?? [];
+        $sampahIds = $get('sampahs') ?? [];
+
+        $kategoriPoin = KategoriSampah::whereIn('id', $kategoriIds)->sum('poin_per_kg');
+        $sampahPoin = Sampah::whereIn('id', $sampahIds)->sum('poin_per_kg');
+
+        $totalPoin = $kategoriPoin + $sampahPoin;
+
+        Log::info("Total Poin Dihitung di Form: $totalPoin");
+
+        $set('jumlah', $totalPoin);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('nasabah.nama')
-                    ->label('Nama Nasabah')
-                    ->sortable()
-                    ->searchable(),
-
-                TextColumn::make('nasabah.email')
-                    ->label('Email Nasabah')
-                    ->sortable()
-                    ->searchable(),
-
-                TextColumn::make('nama_poin')
-                    ->label('Nama Poin')
-                    ->sortable()
-                    ->searchable(),
-
-                TextColumn::make('deskripsi')
-                    ->label('Deskripsi')
-                    ->limit(50),
-
-                TextColumn::make('jumlah')
-                    ->label('Jumlah Poin')
-                    ->sortable(),
-
-                BadgeColumn::make('kategori')
-                    ->label('Kategori')
-                    ->colors([
-                        'success' => 'organik',
-                        'warning' => 'anorganik',
-                        'info' => 'elektronik',
-                        'secondary' => 'lainnya',
-                    ])
-                    ->sortable(),
+                TextColumn::make('nasabah.nama')->label('Nama Nasabah')->sortable()->searchable(),
+                TextColumn::make('kategoriSampahs.nama_kategori')->label('Kategori Sampah')->badge()->separator(','),
+                TextColumn::make('sampahs.nama')->label('Sampah')->badge()->separator(','),
+                TextColumn::make('jumlah')->label('Jumlah Poin'),
             ])
             ->filters([
-                SelectFilter::make('kategori')
-                    ->label('Filter Kategori')
-                    ->options([
-                        'organik' => 'Organik',
-                        'anorganik' => 'Anorganik',
-                        'elektronik' => 'Elektronik',
-                        'lainnya' => 'Lainnya',
-                    ]),
+                SelectFilter::make('kategoriSampahs')->label('Kategori Sampah')->relationship('kategoriSampahs', 'nama_kategori'),
+                SelectFilter::make('sampahs')->label('Sampah')->relationship('sampahs', 'nama'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -147,12 +97,10 @@ class PoinResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make()->label('Tambah Poin'),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [];
     }
 
     public static function getPages(): array

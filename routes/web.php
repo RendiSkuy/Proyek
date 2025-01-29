@@ -7,8 +7,8 @@ use App\Http\Controllers\UserApp\LoginController;
 use App\Http\Controllers\UserApp\RewardController;
 use App\Http\Controllers\UserApp\SampahController;
 use App\Http\Controllers\UserApp\HistoryController;
-use App\Http\Controllers\UserApp\RegisterController;
 use App\Http\Controllers\UserApp\TukarPoinController;
+use App\Http\Controllers\UserApp\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,14 +26,14 @@ Route::get('/', function () {
 
 
     Route::get('/login', [LoginController::class, 'index'])->name('login');
-    Route::post('/login', [LoginController::class, 'store'])->name('store');
-    Route::get('/register', [RegisterController::class, 'index'])->name('indexRegister');
-    Route::post('/register', [RegisterController::class, 'store'])->name('storeUser');
+    Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
 
  
     // AUTH
-    Route::get('/dashboard', [LoginController::class, 'login'])->name('loginDashboard');
-    Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/profile', [ProfileController::class, 'show'])->name('showProfile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('editProfile');
 

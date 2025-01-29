@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('nasabahs', function (Blueprint $table) {
-            $table->id(); // Primary key
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete(); // Relasi ke users
-            $table->string('nama'); // Nama nasabah
-            $table->string('email')->nullable()->change();// Email unik
-            $table->string('password'); // Password terenkripsi
-            $table->text('alamat')->nullable(); // Alamat (opsional)
-            $table->string('telepon')->nullable(); // Nomor telepon (opsional)
-            $table->enum('status', ['active', 'inactive'])->default('active'); // Status nasabah
-            $table->timestamps(); // Kolom created_at dan updated_at// Kolom created_at dan updated_at
+            $table->id(); 
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('nama');
+            $table->string('email')->unique();
+            $table->string('password')->nullable(); // Password boleh kosong
+            $table->text('alamat')->nullable();
+            $table->string('telepon')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->timestamps();
         });
     }
 
@@ -30,6 +30,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('nasabahs');
-        
     }
 };
