@@ -17,6 +17,7 @@ class Nasabah extends Model
         'alamat',
         'telepon',
         'status',
+        'foto',
     ];
 
     protected $hidden = [

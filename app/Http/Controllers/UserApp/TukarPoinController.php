@@ -6,70 +6,70 @@ use App\Http\Controllers\Controller;
 use App\Models\Poin;
 use App\Models\Reward;
 use App\Models\TukarPoin;
+use Illuminate\Http\Request;
 
 class TukarPoinController extends Controller
 {
     public function index()
     {
-        $hiasan = Reward::where('category', 'hiasan')->get()->all();
-        $peralatan = Reward::where('category', 'peralatan')->get()->all();
-        $perlengkapan = Reward::where('category', 'perlengkapan')->get()->all();
-        $point = Poin::where('user_id', auth()->user()->id)->first();
+        // Ambil reward berdasarkan kategori
+        $hiasan = Reward::where('kategori', 'hiasan')->get();
+        $peralatan = Reward::where('kategori', 'peralatan')->get();
+        $perlengkapan = Reward::where('kategori', 'perlengkapan')->get();
 
-        return view('user-app.tukar-poin.tukar-poin-page')->with([
-            'hiasan' => $hiasan,
-            'peralatan' => $peralatan,
-            'perlengkapan' => $perlengkapan,
-            'point' => $point
-        ]);
+        // Ambil poin nasabah
+        $point = Poin::where('nasabah_id', auth()->user()->nasabah->id)->first();
+
+        return view('user-app.tukar-poin.tukar-poin-page', compact('hiasan', 'peralatan', 'perlengkapan', 'point'));
     }
 
     public function show($id)
     {
         $reward = Reward::findOrFail($id);
-        $point = Poin::where('user_id', auth()->user()->id)->first();
-        return view('user-app/tukar-poin/reward')->with(['reward' => $reward, 'point' => $point]);
+        $point = Poin::where('nasabah_id', auth()->user()->nasabah->id)->first();
+
+        return view('user-app.tukar-poin.reward', compact('reward', 'point'));
     }
 
     public function confirm($id)
     {
         $reward = Reward::findOrFail($id);
-        $point = Poin::where('user_id', auth()->user()->id)->first();
-        $time = date("Y-m-d");
-        $point_left = $point->total_points - $reward->price;
-        return view('user-app/tukar-poin/konfirmasi-tukar-poin')->with([
-            'reward' => $reward,
-            'point' => $point,
-            'time' => $time,
-            'point_left' => $point_left
-        ]);
+        $point = Poin::where('nasabah_id', auth()->user()->nasabah->id)->first();
+        $point_left = $point->jumlah - $reward->poin_dibutuhkan;
+
+        return view('user-app.tukar-poin.konfirmasi-tukar-poin', compact('reward', 'point', 'point_left'));
     }
 
     public function store($id)
     {
         $reward = Reward::findOrFail($id);
-        $point = Poin::where('user_id', auth()->user()->id)->first();
+        $point = Poin::where('nasabah_id', auth()->user()->nasabah->id)->first();
 
-        if ($point->total_points >= $reward->price && $reward->stock >= 1) {
+        if ($point->jumlah >= $reward->poin_dibutuhkan && $reward->stok > 0) {
             TukarPoin::create([
-                'user_id' => auth()->user()->id,
+                'nasabah_id' => auth()->user()->nasabah->id,
                 'reward_id' => $reward->id,
-                'quantity' => 1,
-                'total_price' => $reward->price,
-                'status' => 'Pending'
+                'jumlah' => 1,
+                'status' => 'Pending',
+                'tanggal_tukar' => now()
             ]);
 
-            $reward->update([
-                'stock' => ($reward->stock - 1)
-            ]);
+            $reward->decrement('stok');
+            $point->decrement('jumlah', $reward->poin_dibutuhkan);
 
-            $point->update([
-                'total_points' => ($point->total_points - $reward->price)
-            ]);
-
-            return view('user-app/tukar-poin/success');
+            return redirect()->route('tukar-poin.success')->with('success', 'Penukaran poin berhasil!');
         }
 
-        return view('user-app/tukar-poin/failed');
+        return redirect()->route('tukar-poin.failed')->with('error', 'Poin tidak mencukupi atau stok habis!');
+    }
+
+    public function success()
+    {
+        return view('user-app.tukar-poin.success');
+    }
+
+    public function failed()
+    {
+        return view('user-app.tukar-poin.failed');
     }
 }

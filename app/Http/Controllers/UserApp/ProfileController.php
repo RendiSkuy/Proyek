@@ -5,36 +5,60 @@ namespace App\Http\Controllers\UserApp;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
     public function show()
     {
-        return view('user-app/profile', ['user' => Auth::user()]);
+        return view('user-app.profile', ['user' => Auth::user()]);
     }
 
     public function update(Request $request)
     {
-        $user = User::findOrFail(auth()->id());
+        $user = Auth::user();
 
-        $user->username = $request->input('username') ?? $user->username;
-        $user->email = $request->input('email') ?? $user->email;
-        $user->address = $request->input('address') ?? $user->address;
-        $user->phone_number = $request->input('phone_number') ?? $user->phone_number;
+        // Validasi input
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'address' => 'nullable|string|max:255',
+            'phone_number' => 'nullable|numeric|digits_between:10,15',
+            'password' => 'nullable|string|min:6|max:32',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-        // Handle the uploaded image
-        if ($request->hasFile('picture')) {
-            $picture = $request->file('picture');
-            $pictureName = time() . '_' . $picture->getClientOriginalName();
-            $picture->move(public_path('uploads/profile'), $pictureName);
-            $user->picture = '/uploads/profile/' . $pictureName;
+        // Update data user dengan metode update langsung
+        $updateData = [
+            'username' => $request->username,
+            'email' => $request->email,
+            'address' => $request->address,
+            'phone_number' => $request->phone_number,
+        ];
+
+        // Update password jika diisi
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
         }
 
-        $user->save();
+        // Jika ada gambar baru diupload, update gambar
+        if ($request->hasFile('picture')) {
+            $picture = $request->file('picture');
+            $picturePath = $picture->store('uploads/profile', 'public');
 
-        return redirect()->back()->with('success', 'Profile has been updated successfully');
+            // Hapus gambar lama jika ada
+            if ($user->picture && Storage::disk('public')->exists($user->picture)) {
+                Storage::disk('public')->delete($user->picture);
+            }
+
+            $updateData['picture'] = $picturePath;
+        }
+
+        // Simpan perubahan ke database
+        $user->update($updateData);
+
+        return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
     }
 }

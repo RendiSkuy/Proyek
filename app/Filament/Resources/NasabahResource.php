@@ -14,7 +14,6 @@ use Filament\Tables\Table;
 class NasabahResource extends Resource
 {
     protected static ?string $model = Nasabah::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-user';
     protected static ?string $navigationGroup = 'Nasabah';
     protected static ?string $pluralLabel = 'Nasabah';
@@ -26,52 +25,30 @@ class NasabahResource extends Resource
             ->schema([
                 Forms\Components\Card::make()
                     ->schema([
-                        // Relasi User
-                        Forms\Components\Select::make('user_id')
-                        ->label('User')
-                        ->relationship('user', 'name') // Relasi ke model User, menampilkan nama user
-                        ->required()
-                        ->searchable()
-                        ->reactive()
-                        ->afterStateUpdated(function ($state, callable $set) {
-                            // Isi otomatis nama berdasarkan user yang dipilih
-                            if ($user = User::find($state)) {
-                                $set('nama', $user->name); // Ambil nama dari model User
-                                $set('email', $user->email); // Isi otomatis email (opsional)
-                            }
-                        }),
-                    
-
-                        // Nama Nasabah
                         Forms\Components\TextInput::make('nama')
                             ->label('Nama Nasabah')
                             ->required()
                             ->maxLength(255),
 
-                        // Email (diisi otomatis dari relasi User)
                         Forms\Components\TextInput::make('email')
-                            ->label('Email') // Nonaktifkan agar tidak bisa diubah
+                            ->label('Email')
                             ->required(),
 
-                        // Password (hanya saat membuat data baru)
                         Forms\Components\TextInput::make('password')
                             ->label('Password')
                             ->password()
                             ->required()
-                            ->dehydrateStateUsing(fn ($state) => bcrypt($state)) // Enkripsi password sebelum simpan
-                            ->visibleOn(['create']), // Hanya tampil saat membuat data baru
+                            ->dehydrateStateUsing(fn ($state) => bcrypt($state))
+                            ->visibleOn(['create']), 
 
-                        // Alamat
                         Forms\Components\TextInput::make('alamat')
                             ->label('Alamat')
                             ->nullable(),
 
-                        // Telepon
                         Forms\Components\TextInput::make('telepon')
                             ->label('Telepon')
                             ->nullable(),
 
-                        // Status
                         Forms\Components\Select::make('status')
                             ->label('Status')
                             ->options([
@@ -80,7 +57,14 @@ class NasabahResource extends Resource
                             ])
                             ->required()
                             ->default('active'),
-                    ])
+
+                        Forms\Components\FileUpload::make('foto')
+                            ->label('Foto Nasabah')
+                            ->image()
+                            ->directory('uploads/nasabah')
+                            ->maxSize(2048)
+                            ->nullable(),
+                    ]),
             ]);
     }
 
@@ -88,19 +72,27 @@ class NasabahResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name') // Menampilkan nama user dari relasi
+                Tables\Columns\ImageColumn::make('foto')
+                    ->label('Foto')
+                    ->circular(),
+
+                Tables\Columns\TextColumn::make('nama')
                     ->label('Nama')
                     ->searchable()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
                     ->searchable()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('alamat')
                     ->label('Alamat')
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('telepon')
                     ->label('Telepon'),
+
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Status')
                     ->formatStateUsing(fn ($state) => $state === 'active' ? 'Aktif' : 'Tidak Aktif')
@@ -109,6 +101,7 @@ class NasabahResource extends Resource
                         'danger' => 'inactive',
                     ])
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Daftar')
                     ->date()
@@ -129,11 +122,6 @@ class NasabahResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [];
     }
 
     public static function getPages(): array

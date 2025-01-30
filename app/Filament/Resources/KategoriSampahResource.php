@@ -12,7 +12,6 @@ use Filament\Tables\Table;
 
 class KategoriSampahResource extends Resource
 {
-    
     protected static ?string $model = KategoriSampah::class;
     protected static ?string $navigationIcon = 'heroicon-o-trash';
     protected static ?string $navigationGroup = 'Master Data';
@@ -46,6 +45,13 @@ class KategoriSampahResource extends Resource
                     ->label('Poin per Kilogram')
                     ->numeric()
                     ->required(),
+
+                Forms\Components\FileUpload::make('gambar')
+                    ->label('Foto Kategori Sampah')
+                    ->image()
+                    ->directory('uploads/kategori_sampah')
+                    ->maxSize(2048)
+                    ->required(),
             ]);
     }
 
@@ -53,6 +59,10 @@ class KategoriSampahResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('gambar')
+                    ->label('Foto')
+                    ->circular(), // Membuat gambar berbentuk lingkaran
+
                 Tables\Columns\TextColumn::make('nama_kategori')
                     ->label('Nama Kategori')
                     ->searchable()
@@ -98,4 +108,3 @@ class KategoriSampahResource extends Resource
         ];
     }
 }
-

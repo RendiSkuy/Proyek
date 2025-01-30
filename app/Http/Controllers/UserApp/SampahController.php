@@ -10,15 +10,15 @@ use App\Models\SampahCategory;
 
 class SampahController extends Controller
 {
-    public function index()
-    {
-        $categories = KategoriSampah::all();
-        $sampahByCategory = [];
+            public function index()
+        {
+            $categories = KategoriSampah::all();
+            $sampahByCategory = [];
 
-        foreach ($categories as $category) {
-            $sampahByCategory[$category->name] = Sampah::where('kategory_id', $category->id)->get();
+            foreach ($categories as $category) {
+                $sampahByCategory[$category->nama_kategori] = Sampah::where('kategori_sampah_id', $category->id)->get();
+            }
+
+            return view('user-app/sampah', compact('sampahByCategory'));
         }
-
-        return view('user-app/sampah', compact('sampahByCategory'));
-    }
 }

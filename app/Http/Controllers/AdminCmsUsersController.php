@@ -1,125 +1,98 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Http\Controllers\Admin;
 
-use App\Filament\Resources\CmsUsersResource\Pages;
-use App\Models\User; // Pastikan model yang digunakan benar
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
-class CmsUsersResource extends Resource
+class AdminCmsUsersController extends Controller
 {
-    protected static ?string $model = User::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-user';
-    protected static ?string $navigationGroup = 'User Management';
-    protected static ?int $navigationSort = 1;
-
-    public static function form(Form $form): Form
+    public function index()
     {
-        return $form
-            ->schema([
-                Forms\Components\Card::make()
-                    ->schema([
-                        // Field Name
-                        TextInput::make('name')
-                            ->label('Name')
-                            ->required()
-                            ->validation('required|alpha_spaces|min:3'),
-
-                        // Field Email
-                        TextInput::make('email')
-                            ->label('Email')
-                            ->email()
-                            ->required()
-                            ->unique(User::class, 'email', ignoreRecord: true),
-
-                        // Field Photo
-                        FileUpload::make('photo')
-                            ->label('Photo')
-                            ->image()
-                            ->required()
-                            ->validation('required|image|max:1000') // 1MB limit
-                            ->helperText('Recommended resolution is 200x200px'),
-
-                        // Field Privilege
-                        Select::make('id_cms_privileges')
-                            ->label('Privilege')
-                            ->relationship('cmsPrivilege', 'name') // Assuming a relation named 'cmsPrivilege'
-                            ->required(),
-
-                        // Field Password
-                        TextInput::make('password')
-                            ->label('Password')
-                            ->password()
-                            ->helperText('Leave empty if not changing'),
-
-                        // Field Password Confirmation
-                        TextInput::make('password_confirmation')
-                            ->label('Password Confirmation')
-                            ->password()
-                            ->helperText('Leave empty if not changing')
-                            ->dehydrated(false), // Prevent this field from being sent to the database
-                    ]),
-            ]);
+        $users = User::with('cmsPrivilege')->get(); // Pastikan relasi ke privilege ada
+        return view('admin.cms-users.index', compact('users'));
     }
 
-    public static function table(Table $table): Table
+    public function create()
     {
-        return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->label('Name')
-                    ->sortable()
-                    ->searchable(),
-
-                TextColumn::make('email')
-                    ->label('Email')
-                    ->sortable()
-                    ->searchable(),
-
-                TextColumn::make('cmsPrivilege.name')
-                    ->label('Privilege')
-                    ->sortable()
-                    ->searchable(),
-
-                ImageColumn::make('photo')
-                    ->label('Photo')
-                    ->rounded(),
-            ])
-            ->filters([
-                // Tambahkan filter jika diperlukan
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
+        return view('admin.cms-users.create');
     }
 
-    public static function getRelations(): array
+    public function store(Request $request)
     {
-        return [
-            // Tambahkan relasi jika diperlukan
-        ];
+        $validatedData = $request->validate([
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'nullable|string|min:6|confirmed',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'id_cms_privileges' => 'required|exists:cms_privileges,id'
+        ]);
+
+        // Handle password hashing
+        if ($request->filled('password')) {
+            $validatedData['password'] = Hash::make($request->password);
+        }
+
+        // Handle file upload
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('uploads/profile', 'public');
+            $validatedData['photo'] = $path;
+        }
+
+        User::create($validatedData);
+
+        return redirect()->route('admin.cms-users.index')->with('success', 'User berhasil ditambahkan!');
     }
 
-    public static function getPages(): array
+    public function edit(User $user)
     {
-        return [
-			'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUsers::route('/create'),
-            'edit' => Pages\EditUsers::route('/{record}/edit'),
-        ];
+        return view('admin.cms-users.edit', compact('user'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6|confirmed',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'id_cms_privileges' => 'required|exists:cms_privileges,id'
+        ]);
+
+        // Jika password diisi, lakukan hashing
+        if ($request->filled('password')) {
+            $validatedData['password'] = Hash::make($request->password);
+        } else {
+            unset($validatedData['password']);
+        }
+
+        // Jika ada foto baru, hapus foto lama & upload foto baru
+        if ($request->hasFile('photo')) {
+            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
+            }
+
+            $path = $request->file('photo')->store('uploads/profile', 'public');
+            $validatedData['photo'] = $path;
+        }
+
+        $user->update($validatedData);
+
+        return redirect()->route('admin.cms-users.index')->with('success', 'User berhasil diperbarui!');
+    }
+
+    public function destroy(User $user)
+    {
+        // Hapus foto jika ada
+        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+            Storage::disk('public')->delete($user->photo);
+        }
+
+        $user->delete();
+
+        return redirect()->route('admin.cms-users.index')->with('success', 'User berhasil dihapus!');
     }
 }

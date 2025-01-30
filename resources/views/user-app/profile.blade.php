@@ -1,84 +1,125 @@
 @extends('layout.main')
-@section('title', 'Profil | We-Cycle')
+
+@section('title', 'Profil Saya')
 
 @section('content')
-<div id="profile-detail" class="main-container" style="min-height: 100vh">
-    <header id="profile-header" class="mx-auto py-4" style="max-width: 428px; width: 100%">
-    </header>
-    <div class="row">
-        <div class="col d-flex justify-content-center">
-            <img class="rounded-circle border border-3 border-white" style="z-index:11;" width="150px"
-                src="{{ $user->picture ?? asset('/images/profile3.png') }}">
-        </div>
-    </div>
-    <div class="row mt-3 mx-3">
-        <form action="/profile" method="post" enctype="multipart/form-data">
-            @csrf
-            @method('put')
-            <div class="mb-1">
-                <label for="picture" class="form-label fw-bold mt-2 mb-1">Update Foto Profil</label>
-                <input type="file" class="form-control" id="picture" name="picture">
-            </div>
-            <div class=" col-12">
-                <label for="username" class="form-label fw-bold mt-2 mb-1">Username</label>
-                <input type="text" class="form-control" id="username" name="username"
-                    value="{{ $user->username ?? 'Anonim' }}">
-            </div>
-            <div class="col-12">
-                <label for="email" class="form-label fw-bold mt-2 mb-1">Email</label>
-                <input type="email" id="email" name="email" class="form-control"
-                    value="{{ $user->email ?? 'abc@gmail.com' }}" disabled>
-            </div>
-            <div class="col-12">
-                <label for="address" class="form-label fw-bold mt-2 mb-1">Alamat</label>
-                <input type="text" id="address" name="address" class="form-control"
-                    value="{{ $user->address ?? 'Ciputat' }}">
-            </div>
-            <div class="col-12">
-                <label for="phone-number" class="form-label fw-bold mt-2 mb-1">No. Handphone</label>
-                <input type="number" id="phone_number" name="phone_number" class="form-control"
-                    value="{{ $user->phone_number ?? '112233122' }}">
-            </div>
-            <div class="col-12">
-                <label class="form-label fw-bold mt-2 mb-1">Password</label>
-                <input type="password" class="form-control" value="password" disabled readonly>
-            </div>
-            <div class="row mt-4 mx-4 mb-5 pb-5">
-                <button type="submit" class="btn btn-primary rounded-pill fw-bold my-2 px-4 py-2">
-                    Edit Profile
-                </button>
-            </div>
-        </form>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        :root {
+            --primary-green: #2ECC71;
+            --secondary-green: #27AE60;
+            --primary-blue: #1E90FF;
+            --secondary-blue: #1565C0;
+            --background-light: #F1F8E9;
+        }
 
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--background-light);
+            color: #333;
+            padding-bottom: 80px;
+        }
+
+        .profile-container {
+            max-width: 450px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            color: white;
+        }
+
+        .profile-header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+        }
+
+        .profile-info {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .profile-info:last-child {
+            border-bottom: none;
+        }
+
+        .profile-info i {
+            color: var(--primary-blue);
+            margin-right: 10px;
+        }
+
+        .btn-save {
+            background: var(--primary-green);
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-save:hover {
+            background: var(--secondary-green);
+        }
+    </style>
+</head>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <img src="{{ $user->picture ? asset('storage/' . $user->picture) : asset('images/default-profile.png') }}" alt="Profile Picture">
+        <h2>Profil Saya</h2>
     </div>
 
-</div>
-<div class="navigation-menu">
-    <div class="container d-flex justify-content-evenly">
-        <div>
-            <a class="btn btn-lg border-0 px-1 py-auto" href="/dashboard">
-                <i class="bi bi-house" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Beranda</p>
-            </a>
+    @if(session('success'))
+        <div class="alert alert-success text-center">{{ session('success') }}</div>
+    @endif
+
+    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="profile-info">
+            <i class="fas fa-user"></i> <strong>Nama:</strong>
+            <input type="text" name="username" class="form-control" value="{{ old('username', $user->username) }}">
         </div>
-        <div>
-            <a class="btn btn-lg border-0 px-1 py-auto" href="/kategori-sampah">
-                <i class="bi bi-trash" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Kategori</p>
-            </a>
+    
+        <div class="profile-info">
+            <i class="fas fa-envelope"></i> <strong>Email:</strong>
+            <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}">
         </div>
-        <div>
-            <a class="btn btn-lg border-0 px-1 py-auto" href="/profile">
-                <i class="bi bi-person" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Profil</p>
-            </a>
+    
+        <div class="profile-info">
+            <i class="fas fa-map-marker-alt"></i> <strong>Alamat:</strong>
+            <input type="text" name="address" class="form-control" value="{{ old('address', $user->address) }}">
         </div>
-        <div>
-            <a class=" btn btn-lg border-0 px-1 py-auto" href="/settings" role="button">
-                <i class="bi bi-gear" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Pengaturan</p>
-            </a>
+    
+        <div class="profile-info">
+            <i class="fas fa-phone"></i> <strong>Telepon:</strong>
+            <input type="text" name="phone_number" class="form-control" value="{{ old('phone_number', $user->phone_number) }}">
         </div>
-    </div>
+    
+        <div class="profile-info">
+            <i class="fas fa-key"></i> <strong>Password Baru:</strong>
+            <input type="password" name="password" class="form-control" placeholder="Masukkan password baru">
+        </div>
+    
+        <div class="profile-info">
+            <i class="fas fa-camera"></i> <strong>Foto Profil:</strong>
+            <input type="file" name="picture" class="form-control">
+        </div>
+    
+        <button type="submit" class="btn-save mt-3">Simpan Perubahan</button>
+    </form>
 </div>
 @endsection

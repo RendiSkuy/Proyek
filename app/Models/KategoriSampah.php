@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class KategoriSampah extends Model
 {
     use HasFactory;
+    protected $fillable = ['nama_kategori', 'deskripsi', 'jenis', 'poin_per_kg', 'gambar'];
 
-    protected $fillable = ['nama_kategori', 'deskripsi', 'jenis', 'poin_per_kg'];
 
     public function poins(): BelongsToMany
     {

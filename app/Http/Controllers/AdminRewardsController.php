@@ -1,139 +1,97 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Http\Controllers\Admin;
 
-use App\Filament\Resources\RewardsResource\Pages;
-use App\Models\Reward; // Pastikan model ini sesuai dengan tabel rewards
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
+use App\Http\Controllers\Controller;
+use App\Models\Reward;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
-class RewardsResource extends Resource
+class AdminRewardsController extends Controller
 {
-    protected static ?string $model = Reward::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-gift';
-    protected static ?string $navigationGroup = 'Reward Management';
-
-    public static function form(Form $form): Form
+    public function index()
     {
-        return $form
-            ->schema([
-                Forms\Components\Card::make()
-                    ->schema([
-                        // Nama Reward
-                        TextInput::make('name')
-                            ->label('Nama Reward')
-                            ->required()
-                            ->minLength(3)
-                            ->maxLength(70),
-
-                        // Kategori Reward
-                        TextInput::make('category')
-                            ->label('Kategori Reward')
-                            ->required()
-                            ->helperText('Masukkan salah satu dari: hiasan, peralatan, atau perlengkapan.'),
-
-                        // Deskripsi Reward
-                        Textarea::make('description')
-                            ->label('Deskripsi Reward')
-                            ->required()
-                            ->maxLength(255),
-
-                        // Harga dalam Poin
-                        TextInput::make('price')
-                            ->label('Harga (Poin)')
-                            ->required()
-                            ->numeric()
-                            ->minValue(0),
-
-                        // Foto Reward
-                        FileUpload::make('image')
-                            ->label('Foto Reward')
-                            ->image()
-                            ->required()
-                            ->maxSize(3000) // 3MB limit
-                            ->helperText('Format file yang didukung: JPG, JPEG, PNG, GIF, BMP.'),
-
-                        // Jumlah Stok
-                        TextInput::make('stock')
-                            ->label('Jumlah Stok')
-                            ->required()
-                            ->numeric()
-                            ->minValue(0),
-                    ]),
-            ]);
+        $rewards = Reward::all();
+        return view('admin.rewards.index', compact('rewards'));
     }
 
-    public static function table(Table $table): Table
+    public function create()
     {
-        return $table
-            ->columns([
-                // Nama Reward
-                TextColumn::make('name')
-                    ->label('Nama Reward')
-                    ->sortable()
-                    ->searchable(),
-
-                // Kategori Reward
-                TextColumn::make('category')
-                    ->label('Kategori')
-                    ->sortable()
-                    ->searchable(),
-
-                // Deskripsi Reward
-                TextColumn::make('description')
-                    ->label('Deskripsi')
-                    ->limit(50),
-
-                // Harga (Poin)
-                TextColumn::make('price')
-                    ->label('Harga (Poin)')
-                    ->sortable(),
-
-                // Foto Reward
-                ImageColumn::make('image')
-                    ->label('Foto')
-                    ->rounded(),
-
-                // Jumlah Stok
-                TextColumn::make('stock')
-                    ->label('Jumlah Stok')
-                    ->sortable(),
-            ])
-            ->filters([
-                // Tambahkan filter jika diperlukan
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
+        return view('admin.rewards.create');
     }
 
-    public static function getRelations(): array
+    public function store(Request $request)
     {
-        return [
-            // Tambahkan relasi jika diperlukan
-        ];
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'price' => 'required|integer|min:0',
+            'stock' => 'required|integer|min:0',
+            'image' => 'required|image|mimes:jpg,jpeg,png,gif|max:3072', // 3MB limit
+        ]);
+
+        $imagePath = $request->file('image')->store('rewards', 'public');
+
+        Reward::create([
+            'name' => $request->name,
+            'category' => $request->category,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'image' => $imagePath,
+        ]);
+
+        return redirect()->route('admin.rewards.index')->with('success', 'Reward berhasil ditambahkan.');
     }
 
-    public static function getPages(): array
+    public function edit($id)
     {
-        return [
-            'index' => Pages\ListRewards::route('/'),
-            'create' => Pages\CreateReward::route('/create'),
-            'edit' => Pages\EditReward::route('/{record}/edit'),
-        ];
+        $reward = Reward::findOrFail($id);
+        return view('admin.rewards.edit', compact('reward'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $reward = Reward::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'price' => 'required|integer|min:0',
+            'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:3072', // Optional image update
+        ]);
+
+        if ($request->hasFile('image')) {
+            if ($reward->image) {
+                Storage::disk('public')->delete($reward->image);
+            }
+            $imagePath = $request->file('image')->store('rewards', 'public');
+            $reward->image = $imagePath;
+        }
+
+        $reward->update([
+            'name' => $request->name,
+            'category' => $request->category,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock' => $request->stock,
+        ]);
+
+        return redirect()->route('admin.rewards.index')->with('success', 'Reward berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        $reward = Reward::findOrFail($id);
+        
+        if ($reward->image) {
+            Storage::disk('public')->delete($reward->image);
+        }
+
+        $reward->delete();
+        return redirect()->route('admin.rewards.index')->with('success', 'Reward berhasil dihapus.');
     }
 }

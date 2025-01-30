@@ -15,6 +15,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'picture', // Tambahkan picture ke fillable agar bisa diupdate
     ];
 
     protected $hidden = [
@@ -27,8 +28,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function nasabahs()
+    public function nasabah()
     {
-        return $this->hasMany(Nasabah::class);
+        return $this->hasOne(Nasabah::class);
     }
 }

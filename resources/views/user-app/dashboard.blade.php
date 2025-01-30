@@ -1,105 +1,141 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layout.main')
+
+@section('title', 'Dashboard | Bank Hijau Antapani')
+
+@section('content')
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobile-friendly -->
-    <title>@yield('title')</title>
-
-    <!-- Bootstrap & FontAwesome -->
-    <link href="{{ asset('we-cycle-app/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background: linear-gradient(135deg, #1E90FF, #2ECC71);
-            margin: 0;
-            padding: 0;
-            color: #333;
+        :root {
+            --primary-green: #2ECC71;
+            --secondary-green: #27AE60;
+            --primary-blue: #1E90FF;
+            --secondary-blue: #1565C0;
+            --background-gradient: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            --text-dark: #333;
+            --text-light: white;
         }
 
-        .dashboard-container {
-            padding: 20px;
-            max-width: 480px;
-            margin: 0 auto;
-            background: #F9F9F9;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: #F0F8FF;
+            margin: 0;
+            padding-bottom: 80px;
         }
 
         .dashboard-header {
-            text-align: center;
-            color: white;
-            background: linear-gradient(135deg, #1E90FF, #2ECC71);
+            background: var(--background-gradient);
             padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            border-radius: 0 0 20px 20px;
+            color: var(--text-light);
+            text-align: left;
+            position: relative;
+        }
+
+        .dashboard-header h4 {
+            margin-bottom: 5px;
+            font-weight: 400;
+        }
+
+        .dashboard-header .nasabah-name {
+            font-weight: bold;
+            color: var(--primary-blue);
         }
 
         .dashboard-header img {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            margin-top: 10px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
         }
 
-        .summary-cards {
+        .summary-container {
             display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-        }
-
-        .summary-card {
-            flex: 1;
+            justify-content: space-around;
             background: white;
-            text-align: center;
             padding: 15px;
-            margin: 0 5px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            margin: 15px auto;
+            width: 90%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
 
-        .summary-card h4 {
-            margin: 0;
-            color: #1E90FF;
+        .summary-item {
+            flex: 1;
+            font-size: 14px;
         }
 
-        .summary-card p {
-            margin: 5px 0 0;
-            color: #555;
+        .summary-item h4 {
+            color: var(--primary-blue);
+            margin-bottom: 5px;
         }
 
-        .action-button {
-            background: #2ECC71;
+        .cta-button {
+            background: var(--primary-blue);
             color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 12px;
+            border-radius: 12px;
             text-align: center;
-            font-size: 16px;
             font-weight: bold;
-            display: block;
-            margin: 0 auto;
-            text-decoration: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 15px auto;
+            width: 90%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .cta-button i {
+            font-size: 22px;
         }
 
         .transaction-history {
-            margin-top: 20px;
+            margin: 20px auto;
+            width: 90%;
         }
 
-        .transaction-item {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
+        .transaction-header {
             display: flex;
             justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .transaction-header a {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .transaction-header a:hover {
+            text-decoration: underline;
+        }
+
+        .transaction-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-card .amount {
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        .transaction-card .points {
+            background: var(--primary-green);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         .navigation-menu {
@@ -108,85 +144,91 @@
             left: 0;
             width: 100%;
             background: white;
+            padding: 8px 0;
+            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .nav-button {
             text-align: center;
             text-decoration: none;
-            color: #1E90FF;
-            font-size: 14px;
-            font-weight: bold;
+            color: var(--primary-blue);
+            flex: 1;
         }
 
         .nav-button i {
             font-size: 20px;
         }
+
+        .nav-button.active {
+            color: var(--secondary-blue);
+            font-weight: bold;
+        }
     </style>
 </head>
 
-<body>
+<main>
     <div class="dashboard-header">
-        <h1>Hi, {{ $nasabah->name }}</h1>
-        <p>ID Nasabah: {{ $nasabah->id }}</p>
-        <img src="{{ $user->picture ?? asset('images/profile3.png') }}" alt="profile">
+        <h4>Hai, <span class="nasabah-name">{{ $user->username }}</span></h4>
+        <img src="{{ $user->picture ?? asset('images/default-profile.png') }}" alt="Profile">
     </div>
 
-    <div class="dashboard-container">
-        <div class="summary-cards">
-            <div class="summary-card">
-                <h4>{{ $point->jumlah ?? '0' }}</h4>
-                <p>Points</p>
-            </div>
-            <div class="summary-card">
-                <h4>Rp. {{ number_format($transactions->sum('total_income'), 0, ',', '.') }}</h4>
-                <p>Profit</p>
-            </div>
-            <div class="summary-card">
-                <h4>{{ $tukar_poin }}</h4>
-                <p>Reward</p>
-            </div>
+    <!-- Summary Poin & Profit -->
+    <div class="summary-container">
+        <div class="summary-item">
+            <h4>{{ $point->jumlah ?? '0' }}</h4>
+            <p>Points</p>
         </div>
-
-        <a href="/rewards" class="action-button">Tukar Poinmu Sekarang!</a>
-
-        <div class="transaction-history">
-            <h5>Riwayat Transaksi</h5>
-            @foreach ($transactions as $transaction)
-            <div class="transaction-item">
-                <div>
-                    <p><strong>Setoran Sampah:</strong> {{ $transaction->point_received }} Poin</p>
-                    <p>Total: {{ $transaction->total_weight }} Kg</p>
-                </div>
-                <div>
-                    <p>Pendapatan:</p>
-                    <p>Rp. {{ number_format($transaction->total_income, 0, ',', '.') }}</p>
-                </div>
-            </div>
-            @endforeach
+        <div class="summary-item">
+            <h4>Rp. {{ number_format($transactions->sum('total_income'), 0, ',', '.') }}</h4>
+            <p>Profit</p>
+        </div>
+        <div class="summary-item">
+            <h4>{{ $tukar_poin ?? '0' }}</h4>
+            <p>Reward</p>
         </div>
     </div>
 
-    <div class="navigation-menu">
-        <a href="/dashboard" class="nav-button">
-            <i class="fas fa-home"></i>
-            <p>Beranda</p>
-        </a>
-        <a href="/kategori-sampah" class="nav-button">
-            <i class="fas fa-recycle"></i>
-            <p>Kategori</p>
-        </a>
-        <a href="/profile" class="nav-button">
-            <i class="fas fa-user"></i>
-            <p>Profil</p>
-        </a>
-        <a href="/settings" class="nav-button">
-            <i class="fas fa-cog"></i>
-            <p>Pengaturan</p>
-        </a>
+    <!-- Tukar Poin CTA -->
+    <a href="/tukar-poin" class="cta-button">
+        <i class="fas fa-gift"></i> Tukar Poinmu Sekarang!
+    </a>
+
+    <!-- Riwayat Transaksi -->
+    <div class="transaction-history">
+        <div class="transaction-header">
+            <h5 class="fw-bold">Riwayat Transaksi</h5>
+            <a href="/riwayat-transaksi">Lihat Semua</a>
+        </div>
+
+        @foreach ($transactions as $transaction)
+        <div class="transaction-card">
+            <p class="fw-bold">Setoran Sampah <span class="points">{{ $transaction->point_received }}</span></p>
+            <p>Total: <span class="amount">{{ $transaction->total_weight }} Kg</span></p>
+            <p class="text-muted">{{ date('d M Y', strtotime($transaction->created_at)) }}</p>
+        </div>
+        @endforeach
     </div>
-</body>
-</html>
+</main>
+
+<!-- NAVIGATION MENU -->
+<div class="navigation-menu">
+    <a href="/dashboard" class="nav-button active">
+        <i class="fas fa-home"></i>
+        <p>Beranda</p>
+    </a>
+    <a href="/kategori-sampah" class="nav-button">
+        <i class="fas fa-recycle"></i>
+        <p>Kategori</p>
+    </a>
+    <a href="/profile" class="nav-button">
+        <i class="fas fa-user"></i>
+        <p>Profil</p>
+    </a>
+    <a href="/settings" class="nav-button">
+        <i class="fas fa-cog"></i>
+        <p>Pengaturan</p>
+    </a>
+</div>
+@endsection

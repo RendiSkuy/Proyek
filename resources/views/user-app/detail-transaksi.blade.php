@@ -1,90 +1,22 @@
-@extends('layout.header-transaksi')
+@extends('layout.main')
+
 @section('title', 'Detail Transaksi')
 
-@section('transaction-content')
-@section('transaction-title', 'DETAIL TRANSAKSI')
-<main class="main-container" style="min-height: calc(100vh - 64px);">
-    <div class="pt-3 mx-3">
-        <p class="btn btn-outline-primary rounded-pill text-dark">
-            ID #{{ $transaction->id }}
-        </p>
-        <section>
-            <div class="row d-flex align-items-center">
-                <h6 class="fw-bold text-muted">
-                    Sampah Ditukarkan Oleh
-                </h6>
-                <div class="col">
-                    <p class="mb-0 fw-bold">
-                        {{ auth()->user()->username }}
-                    </p>
-                </div>
-                <div class="col text-end">
-                    <p class="mb-0 fw-bold">
-                        {{ $transaction->created_at->format('d-m-Y') }}
-                    </p>
-                </div>
-            </div>
-            <div class="row pt-2 d-flex align-items-center">
-                <h6 class="fw-bold text-muted">
-                    Sampah Diterima oleh
-                </h6>
-                <div class="col">
-                    <p class="mb-0 fw-bold">
-                        {{ $admin->name }}
-                    </p>
-                </div>
-                <div class="col text-end">
-                    <p class="mb-0 fw-bold">
-                        {{ $transaction->created_at->format('d-m-Y') }}
-                    </p>
-                </div>
-            </div>
-            <hr>
-        </section>
-        <section>
-            <h6 class="fw-bold text-muted">
-                Jenis Sampah
-            </h6>
-            <div class="row pt-1">
-                <div class="col">
-                    <p class="mb-0 fw-bold">
-                        {{ $sampah->name }}
-                    </p>
-                </div>
-                <div class="col text-end">
-                    <p class="mb-0 fw-bold">
-                        {{ $transaction->total_weight }} Kg
-                    </p>
-                </div>
-            </div>
-            <hr>
-        </section>
-        <section>
-            <div class="row">
-                <div class="col">
-                    <p class="mb-0 fw-bold">
-                        Total Pendapatan
-                    </p>
-                </div>
-                <div class="col text-end">
-                    <p class="mb-0 fw-bold">
-                        Rp. {{ $transaction->total_income }}
-                    </p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <p class="mb-0 fw-bold">
-                        Jumlah Poin Didapat
-                    </p>
-                </div>
-                <div class="col text-end">
-                    <p class="mb-0 fw-bold text-secondary">
-                        {{ $transaction->point_received }} Poin
-                    </p>
-                </div>
-            </div>
-        </section>
+@section('content')
+<div class="container">
+    <h3 class="fw-bold mt-3">Detail Transaksi</h3>
+
+    <div class="card shadow-sm p-3">
+        @foreach ($transaction->details as $detail)
+    <p><strong>Jenis Sampah:</strong> 
+        {{ optional($detail->sampah)->name ?? 'Tidak Diketahui' }}
+    </p>
+    <p><strong>Total Berat:</strong> {{ $detail->berat }} Kg</p>
+    <p><strong>Total Pendapatan:</strong> Rp. {{ number_format($detail->harga, 0, ',', '.') }}</p>
+    <p><strong>Poin Diterima:</strong> {{ $detail->poin }}</p>
+@endforeach
+
+        <p><strong>Tanggal Transaksi:</strong> {{ $transaction->created_at->format('d M Y') }}</p>
     </div>
-</main>
+</div>
 @endsection

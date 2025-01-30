@@ -34,8 +34,8 @@ Route::get('/', function () {
     // AUTH
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-    Route::get('/profile', [ProfileController::class, 'show'])->name('showProfile');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('editProfile');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
     // PAGES
     Route::get('/settings', [HomeController::class, 'settings'])->name('settings');
@@ -45,10 +45,14 @@ Route::get('/', function () {
     Route::get('/tukar-poin', [TukarPoinController::class, 'index'])->name('indexTukarPoin');
     Route::get('/tukar-poin/reward/{id}', [TukarPoinController::class, 'show'])->name('showReward');
     Route::get('/tukar-poin/reward/{id}/konfirmasi', [TukarPoinController::class, 'confirm'])->name('confirmReward');
+    Route::get('/history/transactions', [HistoryController::class, 'transactionHistory'])->name('history.transactions');
+    Route::get('/history/points', [HistoryController::class, 'poinHistory'])->name('history.points');
+    Route::get('/history/tukar-poin', [HistoryController::class, 'tukarPoinHistory'])->name('history.tukar-poin');
+    Route::get('/history/transaction/{id}', [HistoryController::class, 'show'])->name('history.transaction.detail');
 
     // Transaction
-    Route::get('/transaction/{id}/detail', [HistoryController::class, 'show'])->name('transactionDetail');
-    Route::get('/history/transaction', [HistoryController::class, 'transactionHistory'])->name('transactionHistory');
-    Route::get('/history/points', [HistoryController::class, 'pointHistory'])->name('pointHistory');
-    Route::get('/history/tukar-poin', [HistoryController::class, 'tukarPointHistory'])->name('tukarPointHistory');
+    Route::get('/riwayat-transaksi', [HistoryController::class, 'transactionHistory'])->name('transaction.history');
+    Route::get('/riwayat-transaksi/{id}', [HistoryController::class, 'show'])->name('transaction.detail');
+    Route::get('/riwayat-poin', [HistoryController::class, 'pointHistory'])->name('point.history');
+    Route::get('/riwayat-pesanan', [HistoryController::class, 'tukarPointHistory'])->name('tukar-point.history');
     route::post('/tukar-poin/reward/{id}', [TukarPoinController::class, 'store'])->name('storeTukarPoin');

@@ -1,119 +1,86 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Http\Controllers\Admin;
 
-use App\Filament\Resources\SampahResource\Pages;
+use App\Http\Controllers\Controller;
 use App\Models\Sampah;
-use App\Models\SampahCategory;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Forms\Components\Card;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
+use App\Models\KategoriSampah;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
-class SampahResource extends Resource
+class AdminSampahController extends Controller
 {
-    protected static ?string $model = Sampah::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-trash';
-    protected static ?string $navigationGroup = 'Manajemen Sampah';
-
-    public static function form(Form $form): Form
+    public function index()
     {
-        return $form
-            ->schema([
-                Card::make()->schema([
-                    // Nama Sampah
-                    TextInput::make('name')
-                        ->label('Nama Sampah')
-                        ->required()
-                        ->minLength(3)
-                        ->maxLength(70)
-                        ->placeholder('Masukkan nama sampah'),
-
-                    // Kategori Sampah
-                    Select::make('category_id')
-                        ->label('Kategori Sampah')
-                        ->relationship('category', 'name') // Relasi ke tabel kategori
-                        ->required()
-                        ->searchable(),
-
-                    // Gambar Sampah
-                    FileUpload::make('image')
-                        ->label('Gambar Sampah')
-                        ->image()
-                        ->directory('sampah-images')
-                        ->maxSize(3000)
-                        ->helperText('File yang didukung: JPG, PNG, GIF. Maksimal 3MB.')
-                        ->required(),
-
-                    // Harga per Kg
-                    TextInput::make('price_per_kg')
-                        ->label('Harga per Kg')
-                        ->numeric()
-                        ->minValue(0)
-                        ->required()
-                        ->placeholder('Masukkan harga sampah per kilogram'),
-                ]),
-            ]);
+        $sampahs = Sampah::with('kategori')->get();
+        return view('admin.sampah.index', compact('sampahs'));
     }
 
-    public static function table(Table $table): Table
+    public function create()
     {
-        return $table
-            ->columns([
-                // Kolom Nama Sampah
-                TextColumn::make('name')
-                    ->label('Nama Sampah')
-                    ->sortable()
-                    ->searchable(),
-
-                // Kolom Kategori Sampah
-                TextColumn::make('category.name')
-                    ->label('Kategori Sampah')
-                    ->sortable()
-                    ->searchable(),
-
-                // Kolom Gambar
-                ImageColumn::make('image')
-                    ->label('Gambar'),
-
-                // Kolom Harga per Kg
-                TextColumn::make('price_per_kg')
-                    ->label('Harga per Kg')
-                    ->sortable(),
-            ])
-            ->filters([
-                // Tambahkan filter jika diperlukan
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
+        $categories = KategoriSampah::all();
+        return view('admin.sampah.create', compact('categories'));
     }
 
-    public static function getRelations(): array
+    public function store(Request $request)
     {
-        return [
-            // Tambahkan relasi jika diperlukan
-        ];
+        $validatedData = $request->validate([
+            'nama' => 'required|string|max:255',
+            'kategori_sampah_id' => 'required|exists:kategori_sampahs,id',
+            'harga_per_kg' => 'required|numeric|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        // Handle file upload
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('sampah-images', 'public');
+            $validatedData['image'] = $path;
+        }
+
+        Sampah::create($validatedData);
+
+        return redirect()->route('admin.sampah.index')->with('success', 'Sampah berhasil ditambahkan!');
     }
 
-    public static function getPages(): array
+    public function edit(Sampah $sampah)
     {
-        return [
-            'index' => Pages\ListSampah::route('/'),
-            'create' => Pages\CreateSampah::route('/create'),
-            'edit' => Pages\EditSampah::route('/{record}/edit'),
-        ];
+        $categories = KategoriSampah::all();
+        return view('admin.sampah.edit', compact('sampah', 'categories'));
+    }
+
+    public function update(Request $request, Sampah $sampah)
+    {
+        $validatedData = $request->validate([
+            'nama' => 'required|string|max:255',
+            'kategori_sampah_id' => 'required|exists:kategori_sampahs,id',
+            'harga_per_kg' => 'required|numeric|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        // Jika ada gambar baru, hapus gambar lama & upload gambar baru
+        if ($request->hasFile('image')) {
+            if ($sampah->image && Storage::disk('public')->exists($sampah->image)) {
+                Storage::disk('public')->delete($sampah->image);
+            }
+
+            $path = $request->file('image')->store('sampah-images', 'public');
+            $validatedData['image'] = $path;
+        }
+
+        $sampah->update($validatedData);
+
+        return redirect()->route('admin.sampah.index')->with('success', 'Sampah berhasil diperbarui!');
+    }
+
+    public function destroy(Sampah $sampah)
+    {
+        // Hapus gambar jika ada
+        if ($sampah->image && Storage::disk('public')->exists($sampah->image)) {
+            Storage::disk('public')->delete($sampah->image);
+        }
+
+        $sampah->delete();
+
+        return redirect()->route('admin.sampah.index')->with('success', 'Sampah berhasil dihapus!');
     }
 }

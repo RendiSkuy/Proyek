@@ -6,18 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::table('nasabahs', function (Blueprint $table) {
-            $table->dropForeign(['user_id']); // Hapus foreign key
-            $table->dropColumn('user_id'); // Hapus kolom user_id
+            $table->string('foto')->nullable()->after('status');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('nasabahs', function (Blueprint $table) {
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->dropColumn('foto');
         });
     }
 };

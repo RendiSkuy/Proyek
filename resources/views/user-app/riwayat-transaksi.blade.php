@@ -1,55 +1,31 @@
-@extends('layout.header-transaksi')
+@extends('layout.main')
+
 @section('title', 'Riwayat Transaksi')
 
-@section('transaction-content')
-@section('transaction-title', 'RIWAYAT TRANSAKSI')
-<main class="main-container" style="min-height: calc(100vh - 64px);">
-    @if (isset($transactions) || !empty($transactions))
-    @forelse ($transactions as $transaction)
-    <div class="pt-3 mx-3">
-        <a href="{{ url('/transaction/'.$transaction->id.'/detail') }}" class="text-decoration-none text-dark">
-            <div class="card border-0 shadow mb-2">
-                <div class="card-body">
-                    <div class="row d-flex align-items-center">
-                        <div class="col-7 text-start">
-                            <p class="mb-0 fw-bold">
-                                Setoran Sampah
-                                <span class="rounded-pill text-light bg-green-main px-2 fw-bold">
-                                    {{ $transaction->point_received }}
-                                </span>
-                            </p>
-                            <p class="mb-0">
-                                Total:
-                                <span class="fw-bold" style="color: #0575E6">
-                                    {{ $transaction->total_weight }} Kg
-                                </span>
-                            </p>
-                            <p class="mb-0 font-sm text-muted">
-                                {{ $transaction->created_at }}
-                            </p>
+@section('content')
+<div class="container">
+    <h3 class="fw-bold mt-3">Riwayat Transaksi</h3>
+
+    @if ($transactions->isEmpty())
+        <p class="text-center text-muted">Belum ada transaksi.</p>
+    @else
+        @foreach ($transactions as $transaction)
+            <a href="{{ route('history.transactions', $transaction->id) }}" class="text-decoration-none">
+                <div class="card shadow-sm p-3 mb-3">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p class="fw-bold mb-1">Setoran Sampah</p>
+                            <p class="text-muted mb-0">Total: <strong>{{ $transaction->total_berat }} Kg</strong></p>
+                            <small class="text-muted">{{ $transaction->created_at->format('d M Y') }}</small>
                         </div>
-                        <div class="col-5 text-end">
-                            <p class="mb-0 fw-bold">
-                                Pendapatan
-                            </p>
-                            <p class="mb-0 pe-3 text-secondary fw-bold">
-                                Rp. {{$transaction->total_income}}
-                            </p>
+                        <div class="text-end">
+                            <p class="fw-bold text-success">+{{ number_format($transaction->total_harga, 0, ',', '.') }}</p>
+                            <small class="text-muted">Pendapatan</small>
                         </div>
                     </div>
                 </div>
-            </div>
-        </a>
-    </div>
-    @empty
-    <div class="mx-3 py-2">
-        <div class="card border-0 shadow mb-2">
-            <h5 class="text-center text-danger">
-                Maaf, Kamu belum pernah melakukan transaksi!
-            </h5>
-        </div>
-    </div>
-    @endforelse
+            </a>
+        @endforeach
     @endif
-</main>
+</div>
 @endsection

@@ -1,62 +1,59 @@
 @extends('layout.header-tukar-poin')
 
-@section('title', 'Reward | We-Cycle')
+@section('title', 'Tukar Poin | We-Cycle')
 
 @section('tukar-point-content')
-{{-- HERO REWARD --}}
-<div class="container-fluid mt-4 px-0">
-    <img class="w-100 rounded-3" style="height:300px" src="{{ url($reward->image) }}" alt="reward">
+<!-- HERO REWARD -->
+<div class="container-fluid mt-4 px-0 text-center">
+    <img class="w-100 rounded-3 shadow-sm" style="max-height: 250px; object-fit: cover;" src="{{ url($reward->image) }}" alt="reward">
 </div>
-<div class="container mt-4 pb-5 mb-5 ">
+
+<div class="container mt-4 pb-5">
     <div class="row">
-        <div class="col m-0 d-flex justify-content-between">
-            <h5 class="fw-bold m-0">
-                {{ $reward->name }}
+        <div class="col d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-dark m-0">
+                {{ $reward->nama_reward }}
             </h5>
-            <p class="fw-bold" style="color: #52C41A;">
-                {{ $reward->price }} Poin
+            <p class="fw-bold text-success">
+                {{ number_format($reward->poin_dibutuhkan, 0, ',', '.') }} Poin
             </p>
         </div>
     </div>
+
     <div class="row">
-        <p class="font-sm">
-            {{ $reward->description }}
+        <p class="text-muted mt-2">
+            {{ $reward->deskripsi }}
         </p>
     </div>
-    <div class="row mx-4">
-        <a class="btn btn-primary rounded-pill fw-bold my-2 px-4 py-2"
+
+    <!-- BUTTON TUKAR POIN -->
+    <div class="row text-center">
+        <a class="btn btn-primary rounded-pill fw-bold my-3 px-4 py-2 shadow"
             href="{{ url('/tukar-poin/reward/'.$reward->id.'/konfirmasi') }}">
-            Tukarkan Poin <i class="bi bi-chevron-right"></i>
+            Tukarkan Poin <i class="bi bi-arrow-right-circle ms-1"></i>
         </a>
     </div>
 </div>
 
+<!-- NAVIGATION MENU -->
 <div class="navigation-menu">
     <div class="container d-flex justify-content-evenly">
-        <div>
-            <a class="btn btn-lg border-0 px-1 py-auto" href="/dashboard">
-                <i class="bi bi-house" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Beranda</p>
-            </a>
-        </div>
-        <div>
-            <a class="btn btn-lg border-0 px-1 py-auto" href="/kategori-sampah">
-                <i class="bi bi-trash" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Kategori</p>
-            </a>
-        </div>
-        <div>
-            <a class="btn btn-lg border-0 px-1 py-auto" href="profile">
-                <i class="bi bi-person" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Profil</p>
-            </a>
-        </div>
-        <div>
-            <a class=" btn btn-lg border-0 px-1 py-auto" href="/settings" role="button">
-                <i class="bi bi-gear" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Pengaturan</p>
-            </a>
-        </div>
+        <a class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}" href="/dashboard">
+            <i class="bi bi-house"></i>
+            <p>Beranda</p>
+        </a>
+        <a class="nav-item {{ request()->is('kategori-sampah') ? 'active' : '' }}" href="/kategori-sampah">
+            <i class="bi bi-recycle"></i>
+            <p>Kategori</p>
+        </a>
+        <a class="nav-item {{ request()->is('profile') ? 'active' : '' }}" href="/profile">
+            <i class="bi bi-person"></i>
+            <p>Profil</p>
+        </a>
+        <a class="nav-item {{ request()->is('settings') ? 'active' : '' }}" href="/settings">
+            <i class="bi bi-gear"></i>
+            <p>Pengaturan</p>
+        </a>
     </div>
 </div>
 @endsection
@@ -65,12 +62,12 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 <script>
     var swiper = new Swiper(".mySwiper", {
-      slidesPerView: 3,
-      spaceBetween: 30,
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
+        slidesPerView: 2.5,
+        spaceBetween: 20,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
     });
 </script>
 @endsection

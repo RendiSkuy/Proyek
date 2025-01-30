@@ -11,7 +11,8 @@ class Sampah extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['kategori_sampah_id', 'nama', 'deskripsi', 'harga_per_kg', 'poin_per_kg'];
+    protected $fillable = ['kategori_sampah_id', 'nama', 'deskripsi', 'harga_per_kg', 'poin_per_kg', 'gambar'];
+
 
     public function kategoriSampah(): BelongsTo
     {

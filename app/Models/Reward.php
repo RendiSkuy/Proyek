@@ -14,6 +14,8 @@ class Reward extends Model
     'deskripsi',
     'poin_dibutuhkan',
     'stok',
-    'kategori',];
+    'kategori',
+    'gambar',
+];
 }
 

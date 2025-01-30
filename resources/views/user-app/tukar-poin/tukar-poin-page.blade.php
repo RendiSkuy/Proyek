@@ -38,6 +38,7 @@
                                     {{ $reward->name }}
                                 </p>
                             </div>
+                            
                         </div>
                     </a>
                 </div>

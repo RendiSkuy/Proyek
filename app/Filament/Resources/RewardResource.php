@@ -13,17 +13,17 @@ use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\SelectFilter;
 
 class RewardResource extends Resource
 {
     protected static ?string $model = Reward::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-gift';
     protected static ?string $navigationGroup = 'Master Data';
     protected static ?int $navigationSort = 3;
-
     protected static ?string $label = 'Reward';
     protected static ?string $pluralLabel = 'Data Reward';
 
@@ -65,6 +65,13 @@ class RewardResource extends Resource
                             ])
                             ->required()
                             ->searchable(),
+
+                        FileUpload::make('gambar')
+                            ->label('Gambar Reward')
+                            ->image()
+                            ->directory('uploads/rewards')
+                            ->maxSize(2048)
+                            ->nullable(),
                     ]),
             ]);
     }
@@ -73,6 +80,10 @@ class RewardResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('gambar')
+                    ->label('Gambar')
+                    ->circular(),
+
                 TextColumn::make('nama_reward')
                     ->label('Nama Reward')
                     ->searchable()
@@ -105,13 +116,6 @@ class RewardResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            // Relasi tambahan dapat ditambahkan jika diperlukan
-        ];
     }
 
     public static function getPages(): array

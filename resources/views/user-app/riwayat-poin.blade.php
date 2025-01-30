@@ -1,45 +1,28 @@
-@extends('layout.header-transaksi')
+@extends('layout.main')
+
 @section('title', 'Riwayat Poin')
 
-@section('transaction-content')
-@section('transaction-title', 'RIWAYAT POIN')
-<main class="main-container" style="min-height: calc(100vh - 64px);">
-    <div class=" pt-3 mx-3">
-        @if (isset($transactions) || !empty($transactions))
-        @forelse ($transactions as $transaction)
-        <div class="card border-0 shadow mb-2">
-            <div class="card-body">
-                <div class="row d-flex align-items-center">
-                    <div class="col-7 text-start">
-                        <p class="mb-0 fw-bold">
-                            Setoran Sampah
-                        </p>
-                        <p class="mb-0 font-sm text-muted">
-                            {{ $transaction->created_at }}
-                        </p>
+@section('content')
+<div class="container">
+    <h3 class="fw-bold mt-3">Riwayat Poin</h3>
+
+    @if ($transactions->isEmpty())
+        <p class="text-center text-muted">Belum ada poin yang diterima.</p>
+    @else
+        @foreach ($transactions as $transaction)
+            <div class="card shadow-sm p-3 mb-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p class="fw-bold mb-1">Setoran Sampah</p>
+                        <small class="text-muted">{{ $transaction->created_at->format('d M Y') }}</small>
                     </div>
-                    <div class="col-5 text-end">
-                        <p class="mb-0 pe-3 fw-bold text-main">
-                            + {{ $transaction->point_received }}
-                        </p>
+                    <div class="text-end">
+                        <p class="fw-bold text-primary">+{{ $transaction->total_poin }}</p>
+                        <small class="text-muted">Poin Diterima</small>
                     </div>
                 </div>
             </div>
-        </div>
-        @empty
-        <div class="card border-0 shadow mb-2">
-            <div class="card-body">
-                <div class="row d-flex align-items-center">
-                    <div class="col text-center text-danger">
-                        <p class="mb-0 fw-bold">
-                            Anda belum pernah melakukan transaksi
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endforelse
-        @endif
-    </div>
-</main>
+        @endforeach
+    @endif
+</div>
 @endsection

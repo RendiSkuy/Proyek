@@ -18,67 +18,77 @@ class SampahResource extends Resource
     protected static ?string $pluralLabel = 'Data Sampah';
 
     public static function form(Form $form): Form
-{
-    return $form
-        ->schema([
-            Forms\Components\Select::make('kategori_sampah_id')
-                ->label('Kategori Sampah')
-                ->relationship('kategoriSampah', 'nama_kategori') // Pastikan sesuai dengan Model
-                ->required()
-                ->searchable(),
+    {
+        return $form
+            ->schema([
+                Forms\Components\Select::make('kategori_sampah_id')
+                    ->label('Kategori Sampah')
+                    ->relationship('kategoriSampah', 'nama_kategori') // Pastikan sesuai dengan Model
+                    ->required()
+                    ->searchable(),
 
-            Forms\Components\TextInput::make('nama')
-                ->label('Nama Sampah')
-                ->required()
-                ->maxLength(255),
+                Forms\Components\TextInput::make('nama')
+                    ->label('Nama Sampah')
+                    ->required()
+                    ->maxLength(255),
 
-            Forms\Components\Textarea::make('deskripsi')
-                ->label('Deskripsi')
-                ->maxLength(65535),
+                Forms\Components\Textarea::make('deskripsi')
+                    ->label('Deskripsi')
+                    ->maxLength(65535),
 
-            Forms\Components\TextInput::make('harga_per_kg')
-                ->label('Harga per Kilogram')
-                ->numeric()
-                ->required(),
+                Forms\Components\TextInput::make('harga_per_kg')
+                    ->label('Harga per Kilogram')
+                    ->numeric()
+                    ->required(),
 
-            Forms\Components\TextInput::make('poin_per_kg')
-                ->label('Poin per Kilogram')
-                ->numeric()
-                ->required(),
-        ]);
-}
+                Forms\Components\TextInput::make('poin_per_kg')
+                    ->label('Poin per Kilogram')
+                    ->numeric()
+                    ->required(),
 
-public static function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            Tables\Columns\TextColumn::make('kategoriSampah.nama_kategori')
-                ->label('Kategori Sampah'),
+                Forms\Components\FileUpload::make('gambar')
+                    ->label('Foto Sampah')
+                    ->image()
+                    ->directory('uploads/sampah')
+                    ->maxSize(2048)
+                    ->required(),
+            ]);
+    }
 
-            Tables\Columns\TextColumn::make('nama')
-                ->label('Nama Sampah')
-                ->searchable()
-                ->sortable(),
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\ImageColumn::make('gambar')
+                    ->label('Foto')
+                    ->circular(), // Membuat gambar berbentuk lingkaran
 
-            Tables\Columns\TextColumn::make('harga_per_kg')
-                ->label('Harga per Kilogram'),
+                Tables\Columns\TextColumn::make('kategoriSampah.nama_kategori')
+                    ->label('Kategori Sampah'),
 
-            Tables\Columns\TextColumn::make('poin_per_kg')
-                ->label('Poin per Kilogram'),
-        ])
-        ->filters([
-            Tables\Filters\SelectFilter::make('kategori_sampah_id')
-                ->label('Kategori Sampah')
-                ->relationship('kategoriSampah', 'nama_kategori'),
-        ])
-        ->actions([
-            Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make(),
-        ])
-        ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
-        ]);
+                Tables\Columns\TextColumn::make('nama')
+                    ->label('Nama Sampah')
+                    ->searchable()
+                    ->sortable(),
 
+                Tables\Columns\TextColumn::make('harga_per_kg')
+                    ->label('Harga per Kilogram'),
+
+                Tables\Columns\TextColumn::make('poin_per_kg')
+                    ->label('Poin per Kilogram'),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('kategori_sampah_id')
+                    ->label('Kategori Sampah')
+                    ->relationship('kategoriSampah', 'nama_kategori'),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]);
     }
 
     public static function getPages(): array
@@ -90,4 +100,3 @@ public static function table(Table $table): Table
         ];
     }
 }
-
