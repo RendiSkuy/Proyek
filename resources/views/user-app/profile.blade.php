@@ -4,122 +4,162 @@
 
 @section('content')
 <head>
-    <meta name="viewport" content="width=device-width">
     <style>
+        /* Warna Utama */
         :root {
             --primary-green: #2ECC71;
             --secondary-green: #27AE60;
             --primary-blue: #1E90FF;
             --secondary-blue: #1565C0;
-            --background-light: #F1F8E9;
+            --background-light: #f5f5f5;
         }
 
         body {
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: var(--background-light);
             color: #333;
-            padding-bottom: 80px;
+            margin: 0;
         }
 
         .profile-container {
-            max-width: 450px;
-            margin: 30px auto;
+            max-width: 500px;
+            margin: 40px auto;
             background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
         }
 
         .profile-header {
             text-align: center;
             background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
-            padding: 20px;
-            border-radius: 12px 12px 0 0;
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
             color: white;
         }
 
         .profile-header img {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid white;
+            border: 4px solid white;
+            margin-bottom: 12px;
         }
 
         .profile-info {
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
         }
 
-        .profile-info:last-child {
-            border-bottom: none;
+        .profile-info label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--secondary-blue);
+            display: block;
+            margin-bottom: 5px;
         }
 
-        .profile-info i {
-            color: var(--primary-blue);
-            margin-right: 10px;
+        .profile-info input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
         }
 
         .btn-save {
             background: var(--primary-green);
             color: white;
-            padding: 10px;
+            padding: 14px;
             width: 100%;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             border: none;
+            font-weight: 600;
             transition: 0.3s;
+            cursor: pointer;
         }
 
         .btn-save:hover {
             background: var(--secondary-green);
+        }
+
+        .alert {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                width: 90%;
+                padding: 20px;
+                margin: 20px auto;
+            }
         }
     </style>
 </head>
 
 <div class="profile-container">
     <div class="profile-header">
-        <img src="{{ $user->picture ? asset('storage/' . $user->picture) : asset('images/default-profile.png') }}" alt="Profile Picture">
-        <h2>Profil Saya</h2>
+        <img src="{{ $nasabah->foto ? asset('storage/' . $nasabah->foto) : asset('images/default-profile.png') }}" alt="Profile Picture">
+        <h3>Profil Saya</h3>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success text-center">{{ session('success') }}</div>
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-error">{{ session('error') }}</div>
     @endif
 
     <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="profile-info">
-            <i class="fas fa-user"></i> <strong>Nama:</strong>
-            <input type="text" name="username" class="form-control" value="{{ old('username', $user->username) }}">
+            <label for="nama">Nama:</label>
+            <input type="text" name="nama" value="{{ old('nama', $nasabah->nama) }}" required>
         </div>
-    
+
         <div class="profile-info">
-            <i class="fas fa-envelope"></i> <strong>Email:</strong>
-            <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}">
+            <label for="email">Email:</label>
+            <input type="email" name="email" value="{{ old('email', $nasabah->email) }}" required>
         </div>
-    
+
         <div class="profile-info">
-            <i class="fas fa-map-marker-alt"></i> <strong>Alamat:</strong>
-            <input type="text" name="address" class="form-control" value="{{ old('address', $user->address) }}">
+            <label for="alamat">Alamat:</label>
+            <input type="text" name="alamat" value="{{ old('alamat', $nasabah->alamat) }}">
         </div>
-    
+
         <div class="profile-info">
-            <i class="fas fa-phone"></i> <strong>Telepon:</strong>
-            <input type="text" name="phone_number" class="form-control" value="{{ old('phone_number', $user->phone_number) }}">
+            <label for="telepon">Telepon:</label>
+            <input type="text" name="telepon" value="{{ old('telepon', $nasabah->telepon) }}">
         </div>
-    
+
         <div class="profile-info">
-            <i class="fas fa-key"></i> <strong>Password Baru:</strong>
-            <input type="password" name="password" class="form-control" placeholder="Masukkan password baru">
+            <label for="password">Password Baru:</label>
+            <input type="password" name="password" placeholder="Masukkan password baru">
         </div>
-    
+
         <div class="profile-info">
-            <i class="fas fa-camera"></i> <strong>Foto Profil:</strong>
-            <input type="file" name="picture" class="form-control">
+            <label for="foto">Foto Profil:</label>
+            <input type="file" name="foto">
         </div>
-    
-        <button type="submit" class="btn-save mt-3">Simpan Perubahan</button>
+
+        <button type="submit" class="btn-save">Simpan Perubahan</button>
     </form>
 </div>
 @endsection

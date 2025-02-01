@@ -1,23 +1,77 @@
 @extends('layout.main')
 
 @section('content')
-<header class="navbar navbar-light bg-white shadow-sm" style="max-width: 428px; width: 100%;">
-    {{-- Nav Header --}}
-    <div class="container px-4 border-bottom">
-        <div class="row">
-            <div class="col py-3 d-flex align-items-center text-start">
-                {{-- Tombol Kembali --}}
-                <a href="{{ url('dashboard') }}" class="text-decoration-none">
-                    <i class="bi bi-arrow-left me-3" style="font-size: 1.5rem; color: #1E90FF;"></i>
-                </a>
-                
-                {{-- Judul Halaman --}}
-                <h6 class="fw-bold m-0" style="letter-spacing: 1px; color: #2ECC71;">
-                    @yield('transaction-title')
-                </h6>
-            </div>
-        </div>
-    </div>
+<head>
+    <style>
+        :root {
+            --primary-green: #2ECC71;
+            --secondary-green: #27AE60;
+            --primary-blue: #1E90FF;
+            --secondary-blue: #1565C0;
+            --background-light: #F8F9FA;
+        }
+
+        .transaction-header {
+            max-width: 768px;
+            width: 100%;
+            background: white;
+            padding: 15px;
+            border-bottom: 2px solid var(--primary-green);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-header a {
+            text-decoration: none;
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            transition: color 0.3s ease-in-out;
+        }
+
+        .transaction-header a:hover {
+            color: var(--secondary-blue);
+        }
+
+        .transaction-title {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary-green);
+            text-transform: uppercase;
+            flex: 1;
+            text-align: center;
+        }
+
+        .spacer {
+            width: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .transaction-header {
+                padding: 12px;
+            }
+            
+            .transaction-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<header class="transaction-header">
+    {{-- Tombol Kembali --}}
+    <a href="{{ url('dashboard') }}">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+
+    {{-- Judul Halaman --}}
+    <h6 class="transaction-title">
+        @yield('transaction-title')
+    </h6>
+
+    {{-- Spacer untuk keseimbangan desain --}}
+    <div class="spacer"></div>
 </header>
 
 @yield('transaction-content')

@@ -8,28 +8,24 @@
             --secondary-green: #27AE60;
             --primary-blue: #1E90FF;
             --secondary-blue: #1565C0;
-            --gradient-brand: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            --gradient-header: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
             --text-light: white;
             --text-dark: #333;
+            --background-light: #F8F9FA;
         }
 
+        /* Header */
         .gradient-header {
-            background: var(--gradient-brand);
+            background: var(--gradient-header);
             color: var(--text-light);
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-        }
-
-        .profile img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .points-container {
-            background: var(--gradient-brand);
+            background: var(--gradient-header);
             color: var(--text-light);
             padding: 15px;
             border-radius: 12px;
@@ -37,6 +33,7 @@
             align-items: center;
             justify-content: space-between;
             margin-top: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .points-container img {
@@ -56,23 +53,27 @@
             font-size: 22px;
             font-weight: bold;
         }
+
+        @media (max-width: 768px) {
+            .gradient-header {
+                padding: 15px;
+            }
+
+            .points-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .points-container img {
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 
-<header class="gradient-header mx-auto" style="max-width: 428px; width: 100%;">
+<header class="gradient-header">
     <div class="container text-center px-4">
-        <div class="row">
-            <div class="col py-3 d-flex align-items-center justify-content-between">
-                <div>
-                    <p class="mb-0" style="font-size: 18px; font-weight: bold;">
-                        Hai, {{ auth()->user()->username ?? 'Anonim' }}
-                    </p>
-                </div>
-                <div class="profile">
-                    <img src="{{ auth()->user()->picture ?? asset('images/profile3.png') }}" alt="profile">
-                </div>
-            </div>
-        </div>
+        <h5 class="fw-bold m-0">Tukar Poin</h5>
     </div>
 </header>
 
@@ -80,12 +81,12 @@
     <div class="container pt-4">
         <div class="points-container">
             <div class="point-info">
-                <img src="{{ asset('images/logo-hero.png') }}" alt="we-cycle-logo">
-                <p>Points</p>
+                <img src="{{ asset('images/logo-hero.png') }}" alt="We-Cycle Logo">
+                <p>Poin Anda</p>
             </div>
             <div class="point-info">
                 <p>Poin Saat Ini</p>
-                <p class="point-amount">{{ $point->total_points }}</p>
+                <p class="point-amount">{{ number_format($point->total_points, 0, ',', '.') }}</p>
                 <p style="font-size: 12px;">Berlaku Hingga</p>
                 <p style="font-size: 12px;">31-12-2023</p>
             </div>

@@ -14,7 +14,7 @@ class TransaksiResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
     protected static ?string $navigationGroup = 'Transaksi';
-    protected static ?string $pluralLabel = 'Data Transasksi';
+    protected static ?string $pluralLabel = 'Data Transaksi';
 
     public static function form(Forms\Form $form): Forms\Form
     {
@@ -96,7 +96,6 @@ class TransaksiResource extends Resource
                     ]),
             ]);
     }
-    
 
     public static function table(Tables\Table $table): Tables\Table
     {

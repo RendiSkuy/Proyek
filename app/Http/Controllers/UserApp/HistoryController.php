@@ -2,47 +2,56 @@
 
 namespace App\Http\Controllers\UserApp;
 
-use App\Models\Sampah;
-use App\Models\TukarPoin;
 use App\Models\Transaksi;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Nasabah;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
 class HistoryController extends Controller
 {
-    public function show($id)
+    public function __construct()
     {
-        $transaction = Transaksi::findOrFail($id);
-        $transaction = Transaksi::with('details.sampah')->findOrFail($id);
-        $sampah = Sampah::where('id', $transaction->sampah_id)->first();
-        $admin = DB::table('users')->where('id', $transaction->admin_id)->first();
-        return view('user-app/detail-transaksi')->with([
-            'transaction' => $transaction,
-            'sampah' => $sampah,
-            'admin' => $admin
-        ]);
+        $this->middleware('auth:nasabah'); // Pastikan hanya nasabah yang bisa mengakses
     }
 
-            public function transactionHistory()
-        {
-            $transactions = Transaksi::where('nasabah_id', auth()->id())->latest()->get();
-
-            return view('user-app.riwayat-transaksi', compact('transactions'));
+    /**
+     * Menampilkan halaman riwayat transaksi.
+     */
+    public function transactionHistory()
+    {
+        // Pastikan user sudah login
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silakan login kembali.');
         }
 
+        // Dapatkan informasi nasabah
+        $nasabah = Nasabah::where('email', Auth::user()->email)->first();
 
-        public function poinHistory()
-        {
-            $transactions = Transaksi::where('nasabah_id', auth()->id())->latest()->get();
-            return view('user-app.riwayat-poin', compact('transactions'));
+        if (!$nasabah) {
+            return redirect()->route('login')->with('error', 'Data nasabah tidak ditemukan.');
         }
-        
-        public function tukarPoinHistory()
-        {
-            $tukarPoin_history = TukarPoin::where('nasabah_id', auth()->id())->latest()->get();
-            return view('user-app.riwayat-pesanan', compact('tukarPoin_history'));
+
+        // Ambil transaksi milik nasabah
+        $transactions = Transaksi::where('nasabah_id', $nasabah->id)
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+        return view('user-app.riwayat-transaksi', compact('transactions'));
+    }
+
+    /**
+     * Menampilkan detail transaksi berdasarkan ID.
+     */
+    public function show($id)
+    {
+        $transaction = Transaksi::with('details.sampah')->findOrFail($id);
+
+        // Pastikan transaksi milik nasabah yang login
+        $nasabah = Nasabah::where('email', Auth::user()->email)->first();
+        if (!$nasabah || $transaction->nasabah_id !== $nasabah->id) {
+            return redirect()->route('transaction.history')->with('error', 'Akses tidak diizinkan.');
         }
-        
-    
+
+        return view('user-app.detail-transaksi', compact('transaction'));
+    }
 }

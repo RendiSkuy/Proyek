@@ -1,180 +1,104 @@
-@extends('layout.header-tukar-poin')
-@section('title', 'Tukar Poin | We-Cycle')
+@extends('layout.main')
 
-@section('tukar-point-content')
-<div class="container">
-    {{-- MENU --}}
-    <div class="row mx-3 mt-3">
-        <div class="col p-0 d-flex justify-content-between">
-            <a class=" btn btn-light text-dark rounded-4 py-2 px-3 shadow fw-bold mt-1" href="/history/points">
-                <i style="color: #0575E6" class="bi bi-file-earmark-text-fill pe-1"></i>
-                <span>Riwayat Poin</span>
-            </a>
-            <a class="btn btn-light text-dark rounded-4 py-2 px-3 shadow fw-bold mt-1" href="/history/tukar-poin">
-                <i style="color: #0575E6" class="bi bi-bag-dash-fill pe-1"></i>
-                <span>Pesanan Saya</span>
-            </a>
-        </div>
-    </div>
-</div>
-{{-- REWARD --}}
-<div class="container pb-5 mb-5">
-    <div class="row mt-5 mx-3">
-        <h5 class="fw-bold ps-0 mb-3">Hiasan</h5>
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
-                @if (isset($hiasan) || !empty($hiasan))
-                @forelse ($hiasan as $reward)
-                <div class="swiper-slide me-3 w-50">
-                    <a class="text-dark text-decoration-none" href="{{url("/tukar-poin/reward/{$reward->id}")}}">
-                        <div class="card">
-                            <img style="height: 78px;" src="{{ $reward->image }}" class="card-img-top min-w-100"
-                                alt="{{ $reward->name }}">
-                            <div class="card-body">
-                                <h6 class="card-title my-0 fw-bold">
-                                    {{ $reward->price }}
-                                </h6>
-                                <p class="card-text reward-name font-sm mt-0">
-                                    {{ $reward->name }}
-                                </p>
-                            </div>
-                            
-                        </div>
-                    </a>
-                </div>
-                @empty
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="card-title my-0 fw-bold">
-                            Belum Ada Data!
-                        </h6>
-                        <p class="card-text reward-name font-sm mt-0">
-                            Input data terlebih dulu!
-                        </p>
-                    </div>
-                </div>
-                @endforelse
-                @endif
-            </div>
-        </div>
-    </div>
-    {{-- Reward Kategori 2 --}}
-    <div class="row mt-4 mx-3">
-        <h5 class="fw-bold ps-0 mb-3">Peralatan</h5>
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
-                @if (isset($peralatan) || !empty($peralatan ))
-                @forelse ($peralatan as $reward)
-                <div class="swiper-slide me-3 w-50">
-                    <a class="text-dark text-decoration-none" href="{{url("/tukar-poin/reward/{$reward->id}")}}">
-                        <div class="card">
-                            <img style="height: 78px;" src="{{ $reward->image }}" class="card-img-top min-w-100"
-                                alt="{{ $reward->name }}">
-                            <div class="card-body">
-                                <h6 class="card-title my-0 fw-bold">
-                                    {{ $reward->price }}
-                                </h6>
-                                <p class="card-text reward-name font-sm mt-0">
-                                    {{ $reward->name }}
-                                </p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                @empty
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="card-title my-0 fw-bold">
-                            Belum Ada Data!
-                        </h6>
-                        <p class="card-text reward-name font-sm mt-0">
-                            Input data terlebih dulu!
-                        </p>
-                    </div>
-                </div>
-                @endforelse
-                @endif
-            </div>
-        </div>
-    </div>
-    {{-- Reward Kategori 3 --}}
-    <div class="row mt-4 mx-3">
-        <h5 class="fw-bold ps-0 mb-3">Perlengkapan</h5>
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
-                @if (isset($perlengkapan) || !empty($perlengkapan ))
-                @forelse ($perlengkapan as $reward)
-                <div class="swiper-slide me-3 w-50">
-                    <a class="text-dark text-decoration-none" href="{{url("/tukar-poin/reward/{$reward->id}")}}">
-                        <div class="card">
-                            <img style="height: 78px;" src="{{ $reward->image }}" class="card-img-top min-w-100"
-                                alt="{{ $reward->name }}">
-                            <div class="card-body">
-                                <h6 class="card-title my-0 fw-bold">
-                                    {{ $reward->price }}
-                                </h6>
-                                <p class="card-text reward-name font-sm mt-0">
-                                    {{ $reward->name }}
-                                </p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                @empty
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="card-title my-0 fw-bold">
-                            Belum Ada Data!
-                        </h6>
-                        <p class="card-text reward-name font-sm mt-0">
-                            Input data terlebih dulu!
-                        </p>
-                    </div>
-                </div>
-                @endforelse
-                @endif
-            </div>
-        </div>
-    </div>
-</div>
-<div class="navigation-menu">
-    <div class="container d-flex justify-content-evenly">
-        <div>
-            <a class="btn btn-lg border-0 px-1 py-auto" href="/dashboard">
-                <i class="bi bi-house" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Beranda</p>
-            </a>
-        </div>
-        <div>
-            <a class="btn btn-lg border-0 px-1 py-auto" href="/kategori-sampah">
-                <i class="bi bi-trash" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Kategori</p>
-            </a>
-        </div>
-        <div>
-            <a class="btn btn-lg border-0 px-1 py-auto" href="/profile">
-                <i class="bi bi-person" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Profil</p>
-            </a>
-        </div>
-        <div>
-            <a class=" btn btn-lg border-0 px-1 py-auto" href="/settings" role="button">
-                <i class="bi bi-gear" style="font-size: 1.5rem; color:#0575E6;"></i>
-                <p class="text-dark fw-bold font-sm p-0 m-0">Pengaturan</p>
-            </a>
-        </div>
-    </div>
-</div>
-@endsection
+@section('title', 'Tukar Poin | Bank Hijau Antapani')
 
-@section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-<script>
-    var swiper = new Swiper(".mySwiper", {
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-    });
-</script>
+@section('content')
+<head>
+    <style>
+        :root {
+            --primary-green: #2ECC71;
+            --secondary-green: #27AE60;
+            --primary-blue: #1E90FF;
+            --secondary-blue: #1565C0;
+            --background-light: #F5F5F5;
+        }
+
+        .reward-container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .reward-header {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            color: white;
+        }
+
+        .reward-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .reward-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: 0.3s;
+            overflow: hidden;
+        }
+
+        .reward-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .reward-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .reward-card h6 {
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin: 10px 0 5px;
+        }
+
+        .reward-card p {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .reward-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<div class="reward-container">
+    <div class="reward-header">
+        <h3>Tukar Poin</h3>
+        <p>Saldo Poin Anda: <strong>{{ $nasabah->poin->jumlah ?? 0 }}</strong></p>
+    </div>
+
+    @foreach (['hiasan' => $hiasan, 'peralatan' => $peralatan, 'perlengkapan' => $perlengkapan] as $kategori => $items)
+        <div class="reward-section">
+            <h5 class="fw-bold text-primary mt-3">{{ ucfirst($kategori) }}</h5>
+            <div class="reward-list">
+                @forelse ($items as $reward)
+                    <a href="{{ route('tukar-poin.show', $reward->id) }}" class="text-decoration-none">
+                        <div class="reward-card">
+                            <img src="{{ $reward->image ? asset('storage/' . $reward->image) : asset('images/default.png') }}" alt="{{ $reward->nama_reward }}">
+                            <h6>{{ number_format($reward->poin_dibutuhkan, 0, ',', '.') }} Poin</h6>
+                            <p>{{ $reward->nama_reward }}</p>
+                        </div>
+                    </a>
+                @empty
+                    <p class="text-muted">Belum ada hadiah dalam kategori ini.</p>
+                @endforelse
+            </div>
+        </div>
+    @endforeach
+</div>
 @endsection

@@ -12,14 +12,14 @@ class AdminTransactionsController extends Controller
 {
     public function index()
     {
-        $transactions = Transaksi::with(['nasabah', 'sampah'])->latest()->get();
+        $transactions = Transaksi::with(['nasabah:id,nama'])->latest()->limit(50)->get();
         return view('admin.transaksi.index', compact('transactions'));
     }
 
     public function create()
     {
-        $nasabahs = Nasabah::all();
-        $sampahs = Sampah::all();
+        $nasabahs = Nasabah::select(['id', 'nama'])->get();
+        $sampahs = Sampah::select(['id', 'nama', 'harga_per_kg', 'poin_per_kg'])->get();
         return view('admin.transaksi.create', compact('nasabahs', 'sampahs'));
     }
 
@@ -40,36 +40,10 @@ class AdminTransactionsController extends Controller
         $validatedData['tanggal'] = now();
         $validatedData['kode_transaksi'] = 'TRX-' . now()->format('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(6));
 
-        Transaksi::create($validatedData);
+        $transaksi = Transaksi::create($validatedData);
+        $transaksi->updateTotals();
 
         return redirect()->route('admin.transaksi.index')->with('success', 'Transaksi berhasil ditambahkan!');
-    }
-
-    public function edit(Transaksi $transaksi)
-    {
-        $nasabahs = Nasabah::all();
-        $sampahs = Sampah::all();
-        return view('admin.transaksi.edit', compact('transaksi', 'nasabahs', 'sampahs'));
-    }
-
-    public function update(Request $request, Transaksi $transaksi)
-    {
-        $validatedData = $request->validate([
-            'nasabah_id' => 'required|exists:nasabahs,id',
-            'sampah_id' => 'required|exists:sampahs,id',
-            'total_berat' => 'required|numeric|min:0',
-            'keterangan' => 'nullable|string|max:255',
-            'status' => 'required|in:sedang di proses,selesai',
-        ]);
-
-        $sampah = Sampah::findOrFail($request->sampah_id);
-
-        $validatedData['total_harga'] = $sampah->harga_per_kg * $request->total_berat;
-        $validatedData['total_poin'] = $sampah->poin_per_kg * $request->total_berat;
-
-        $transaksi->update($validatedData);
-
-        return redirect()->route('admin.transaksi.index')->with('success', 'Transaksi berhasil diperbarui!');
     }
 
     public function destroy(Transaksi $transaksi)

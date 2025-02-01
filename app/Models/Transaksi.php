@@ -9,6 +9,8 @@ class Transaksi extends Model
 {
     use HasFactory;
 
+    protected $table = 'transaksis';
+
     protected $fillable = [
         'nasabah_id',
         'kode_transaksi',
@@ -20,6 +22,16 @@ class Transaksi extends Model
         'status',
     ];
 
+    public function nasabah()
+    {
+        return $this->belongsTo(Nasabah::class, 'nasabah_id')->select(['id', 'nama']);
+    }
+
+    public function details()
+    {
+        return $this->hasMany(TransaksiDetail::class, 'transaksi_id');
+    }
+
     protected static function booted()
     {
         static::creating(function ($transaksi) {
@@ -27,28 +39,30 @@ class Transaksi extends Model
                 $transaksi->kode_transaksi = 'TRX-' . now()->format('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(6));
             }
         });
+
+        static::saved(function ($transaksi) {
+            if ($transaksi->wasRecentlyCreated) {
+                Poin::updatePoin($transaksi->nasabah_id);
+            }
+        });
+
+        static::deleted(function ($transaksi) {
+            Poin::updatePoin($transaksi->nasabah_id);
+        });
     }
 
-    public function nasabah()
-    {
-        return $this->belongsTo(Nasabah::class);
-    }
-
-    public function details()
-    {
-        return $this->hasMany(TransaksiDetail::class);
-    }
-
-    /**
-     * Update total berat, harga, dan poin berdasarkan detail transaksi.
-     */
     public function updateTotals(): void
     {
-        $this->total_berat = $this->details->sum('berat');
-        $this->total_harga = $this->details->sum('harga');
-        $this->total_poin = $this->details->sum('poin');
-        $this->save();
+        $totalBerat = $this->details()->sum('berat');
+        $totalHarga = $this->details()->sum('harga');
+        $totalPoin = $this->details()->sum('poin');
+
+        if ($this->total_berat != $totalBerat || $this->total_harga != $totalHarga || $this->total_poin != $totalPoin) {
+            $this->update([
+                'total_berat' => $totalBerat,
+                'total_harga' => $totalHarga,
+                'total_poin' => $totalPoin,
+            ]);
+        }
     }
 }
-
-

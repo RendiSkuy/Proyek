@@ -14,7 +14,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <p class="fw-bold mb-1">Setoran Sampah</p>
-                        <small class="text-muted">{{ $transaction->created_at->format('d M Y') }}</small>
+                        <small class="text-muted">{{ date('d M Y', strtotime($transaction->tanggal)) }}</small>
                     </div>
                     <div class="text-end">
                         <p class="fw-bold text-primary">+{{ $transaction->total_poin }}</p>

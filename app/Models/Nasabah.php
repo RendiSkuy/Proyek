@@ -2,39 +2,35 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable; // Gunakan Authenticatable
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
-class Nasabah extends Model
+class Nasabah extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $fillable = [
-        'user_id',
         'nama',
         'email',
         'password',
         'alamat',
         'telepon',
-        'status',
         'foto',
     ];
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function poins()
     {
         return $this->hasMany(Poin::class);
     }
-    public function nasabah()
-{
-    return $this->hasOne(Nasabah::class);
-}
+
+    public function transaksi()
+    {
+        return $this->hasMany(Transaksi::class, 'nasabah_id');
+    }
 }

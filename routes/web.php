@@ -3,56 +3,63 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserApp\ProfileController;
 use App\Http\Controllers\UserApp\HomeController;
-use App\Http\Controllers\UserApp\LoginController;
+use App\Http\Controllers\UserApp\NasabahLoginController;
 use App\Http\Controllers\UserApp\RewardController;
 use App\Http\Controllers\UserApp\SampahController;
 use App\Http\Controllers\UserApp\HistoryController;
 use App\Http\Controllers\UserApp\TukarPoinController;
 use App\Http\Controllers\UserApp\DashboardController;
+use App\Http\Controllers\UserApp\KategoriSampahController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+// Landing Page
 Route::get('/', function () {
     return view('landing-page');
 });
 
+// **AUTH ROUTES**
+    Route::get('/login', [NasabahLoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [NasabahLoginController::class, 'login'])->name('login.store');
+    Route::post('/logout', [NasabahLoginController::class, 'logout'])->name('logout')->middleware('auth:nasabah');
 
-    Route::get('/login', [LoginController::class, 'index'])->name('login');
-    Route::post('/login', [LoginController::class, 'store'])->name('login.store');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+// **Protected Routes - Hanya bisa diakses oleh user yang sudah login**
+Route::middleware(['auth'])->group(function () {
 
-
- 
-    // AUTH
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::middleware('auth:nasabah')->group(function () {
+    // Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-
-    // PAGES
+});
+    // Settings
     Route::get('/settings', [HomeController::class, 'settings'])->name('settings');
-    Route::get('/kategori-sampah', [SampahController::class, 'index'])->name('index');
 
-    // Tukar Poin -> Transaction
-    Route::get('/tukar-poin', [TukarPoinController::class, 'index'])->name('indexTukarPoin');
-    Route::get('/tukar-poin/reward/{id}', [TukarPoinController::class, 'show'])->name('showReward');
-    Route::get('/tukar-poin/reward/{id}/konfirmasi', [TukarPoinController::class, 'confirm'])->name('confirmReward');
-    Route::get('/history/transactions', [HistoryController::class, 'transactionHistory'])->name('history.transactions');
-    Route::get('/history/points', [HistoryController::class, 'poinHistory'])->name('history.points');
-    Route::get('/history/tukar-poin', [HistoryController::class, 'tukarPoinHistory'])->name('history.tukar-poin');
-    Route::get('/history/transaction/{id}', [HistoryController::class, 'show'])->name('history.transaction.detail');
+    // **Kategori Sampah**
+    Route::get('/kategori-sampah', [KategoriSampahController::class, 'index'])->name('kategori-sampah.index');
 
-    // Transaction
+    // Route untuk sampah
+    Route::get('/sampah', [SampahController::class, 'index'])->name('sampah.index');
+    Route::get('/sampah/kategori/{kategori_id}', [SampahController::class, 'showByCategory'])->name('sampah.by-category');
+        
+    Route::middleware(['auth:nasabah'])->group(function () {
+        Route::get('/tukar-poin', [TukarPoinController::class, 'index'])->name('tukar-poin');
+        Route::get('/tukar-poin/reward/{id}', [TukarPoinController::class, 'show'])->name('tukar-poin.show');
+        Route::get('/tukar-poin/reward/{id}/confirm', [TukarPoinController::class, 'confirm'])->name('tukar-poin.confirm');
+        Route::post('/tukar-poin/reward/{id}', [TukarPoinController::class, 'store'])->name('tukar-poin.store');
+        Route::get('/tukar-poin/success', [TukarPoinController::class, 'success'])->name('tukar-poin.success');
+        Route::get('/tukar-poin/failed', [TukarPoinController::class, 'failed'])->name('tukar-poin.failed');
+    });
+    
+    
+
+
+    // **Riwayat Transaksi**
     Route::get('/riwayat-transaksi', [HistoryController::class, 'transactionHistory'])->name('transaction.history');
-    Route::get('/riwayat-transaksi/{id}', [HistoryController::class, 'show'])->name('transaction.detail');
-    Route::get('/riwayat-poin', [HistoryController::class, 'pointHistory'])->name('point.history');
-    Route::get('/riwayat-pesanan', [HistoryController::class, 'tukarPointHistory'])->name('tukar-point.history');
-    route::post('/tukar-poin/reward/{id}', [TukarPoinController::class, 'store'])->name('storeTukarPoin');
+    Route::get('/riwayat-transaksi/{id}', [HistoryController::class, 'show'])->name('history.transaction.detail');
+
+    // **Riwayat Poin**
+    Route::get('/riwayat-poin', [HistoryController::class, 'poinHistory'])->name('point.history');
+
+    // **Riwayat Tukar Poin**
+    Route::get('/riwayat-pesanan', [HistoryController::class, 'tukarPoinHistory'])->name('tukar-point.history');
+});

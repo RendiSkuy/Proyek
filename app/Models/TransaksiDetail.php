@@ -21,7 +21,6 @@ class TransaksiDetail extends Model
     {
         parent::boot();
 
-        // Event sebelum detail transaksi disimpan
         static::saving(function ($detail) {
             $sampah = Sampah::find($detail->sampah_id);
 
@@ -31,28 +30,26 @@ class TransaksiDetail extends Model
             }
         });
 
-        // Event setelah detail transaksi disimpan
         static::saved(function ($detail) {
-            // Update total di tabel transaksi
-            $detail->transaksi->updateTotals();
+            if (!$detail->wasRecentlyCreated) {
+                $detail->transaksi->updateTotals();
+                Poin::updatePoin($detail->transaksi->nasabah_id);
+            }
         });
 
-        // Event setelah detail transaksi dihapus
         static::deleted(function ($detail) {
-            // Update total di tabel transaksi
             $detail->transaksi->updateTotals();
+            Poin::updatePoin($detail->transaksi->nasabah_id);
         });
     }
 
-    // Relasi ke transaksi
     public function transaksi()
     {
         return $this->belongsTo(Transaksi::class, 'transaksi_id');
     }
 
-    // Relasi ke sampah
     public function sampah()
     {
-        return $this->belongsTo(Sampah::class, 'sampah_id');
+        return $this->belongsTo(Sampah::class, 'sampah_id')->select(['id', 'nama', 'harga_per_kg', 'poin_per_kg']);
     }
 }

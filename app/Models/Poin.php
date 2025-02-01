@@ -1,33 +1,29 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Poin extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nasabah_id', 'jumlah']; // Pastikan 'jumlah' ada di sini
+    protected $fillable = ['nasabah_id', 'jumlah'];
 
-    public function nasabah(): BelongsTo
+    public function nasabah()
     {
-        return $this->belongsTo(Nasabah::class);
+        return $this->belongsTo(Nasabah::class, 'nasabah_id')->select(['id', 'nama']);
     }
 
-    public function kategoriSampahs(): BelongsToMany
+    public static function updatePoin($nasabah_id)
     {
-        return $this->belongsToMany(KategoriSampah::class, 'kategori_sampah_poin', 'poin_id', 'kategori_sampah_id');
-    }
+        $totalPoin = Transaksi::where('nasabah_id', $nasabah_id)->sum('total_poin');
 
-    public function sampahs(): BelongsToMany
-    {
-        return $this->belongsToMany(Sampah::class, 'sampah_poin', 'poin_id', 'sampah_id');
+        $poin = self::firstOrNew(['nasabah_id' => $nasabah_id]);
+        if ($poin->jumlah != $totalPoin) {
+            $poin->jumlah = $totalPoin;
+            $poin->save();
+        }
     }
 }
-
-
-
-

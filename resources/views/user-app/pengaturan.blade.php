@@ -1,74 +1,55 @@
-<!-- resources/views/layout/main.blade.php -->
-<!DOCTYPE html>
-<html lang="id">
+@extends('layout.main')
+
+@section('title', 'Pengaturan')
+
+@section('content')
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title')</title>
-
-    <!-- Bootstrap & FontAwesome -->
-    <link href="{{ asset('we-cycle-app/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
-
     <style>
+        /* Warna Utama */
         :root {
             --primary-green: #2ECC71;
             --secondary-green: #27AE60;
             --primary-blue: #1E90FF;
             --secondary-blue: #1565C0;
-            --background-gradient: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
-            --text-dark: #333;
-            --text-light: white;
+            --background-light: #f5f5f5;
         }
 
         body {
-            font-family: 'Open Sans', sans-serif;
-            background: var(--background-gradient);
-            color: var(--text-dark);
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-light);
+            color: #333;
             margin: 0;
-            padding-bottom: 70px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .main-container {
-            width: 100%;
-            max-width: 480px;
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-
-        /* Header */
-        .dashboard-header, .settings-header {
-            text-align: center;
-            padding: 20px;
-            border-radius: 12px;
-            background: var(--background-gradient);
-            color: var(--text-light);
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .settings-container {
+            max-width: 500px;
+            margin: 40px auto;
             background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .settings-header {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
+            color: white;
         }
 
         .settings-option {
-            padding: 10px;
+            padding: 15px;
             border-bottom: 1px solid #ddd;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .settings-option:hover {
+            background: rgba(0, 0, 0, 0.05);
         }
 
         .settings-option:last-child {
@@ -77,98 +58,60 @@
 
         .settings-option i {
             color: var(--primary-blue);
-            margin-right: 10px;
+            font-size: 18px;
         }
 
         .settings-option a {
             text-decoration: none;
             color: var(--text-dark);
             font-weight: 500;
+            font-size: 16px;
+            flex-grow: 1;
+            padding-left: 10px;
         }
 
-        /* Footer Navigation */
-        .navigation-menu {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: white;
-            padding: 10px 0;
-            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-around;
-            border-top: 2px solid var(--primary-green);
+        .logout-option {
+            color: red;
+            font-weight: bold;
         }
 
-        .nav-button {
-            text-align: center;
-            text-decoration: none;
-            color: var(--primary-blue);
-            flex: 1;
-            padding: 5px 0;
-            transition: all 0.3s ease;
+        .logout-option i {
+            color: red;
         }
 
-        .nav-button i {
-            font-size: 22px;
-            display: block;
-            margin-bottom: 3px;
-        }
-
-        .nav-button:hover,
-        .nav-button.active {
-            color: var(--secondary-blue);
+        @media (max-width: 768px) {
+            .settings-container {
+                width: 90%;
+                padding: 20px;
+                margin: 20px auto;
+            }
         }
     </style>
 </head>
 
-<body>
-    <div class="main-container">
-        <div class="settings-header">
-            <h2>Pengaturan</h2>
-        </div>
-
-        <div class="settings-container">
-            <div class="settings-option">
-                <a href="/profile"><i class="fas fa-user"></i> Profil</a>
-                <i class="fas fa-chevron-right"></i>
-            </div>
-            {{-- <div class="settings-option">
-                <a href="/security"><i class="fas fa-lock"></i> Keamanan</a>
-                <i class="fas fa-chevron-right"></i>
-            </div> --}}
-            <div class="settings-option">
-                <a href="/notifications"><i class="fas fa-bell"></i> Notifikasi</a>
-                <i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="settings-option">
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="bi bi-box-arrow-right"></i> Logout
-            </div>
-        </div>
+<div class="settings-container">
+    <div class="settings-header">
+        <h2>Pengaturan</h2>
     </div>
 
-    <!-- Footer Navigation -->
-    <div class="navigation-menu">
-        <a href="/dashboard" class="nav-button">
-            <i class="fas fa-home"></i>
-            <p>Beranda</p>
-        </a>
-        <a href="/kategori-sampah" class="nav-button">
-            <i class="fas fa-recycle"></i>
-            <p>Kategori</p>
-        </a>
-        <a href="/profile" class="nav-button">
-            <i class="fas fa-user"></i>
-            <p>Profil</p>
-        </a>
-        <a href="/settings" class="nav-button active">
-            <i class="fas fa-cog"></i>
-            <p>Pengaturan</p>
-        </a>
+    <div class="settings-option">
+        <i class="fas fa-user"></i>
+        <a href="/profile">Profil</a>
+        <i class="fas fa-chevron-right"></i>
     </div>
-</body>
-</html>
+
+    <div class="settings-option">
+        <i class="fas fa-bell"></i>
+        <a href="/notifications">Notifikasi</a>
+        <i class="fas fa-chevron-right"></i>
+    </div>
+
+    <div class="settings-option logout-option">
+        <i class="fas fa-sign-out-alt"></i>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Keluar</a>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
+    </div>
+</div>
+@endsection

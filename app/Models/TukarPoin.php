@@ -9,7 +9,9 @@ class TukarPoin extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nasabah_id', 'reward_id', 'jumlah', 'status','tanggal_tukar'];
+    protected $table = 'tukar_poins';
+
+    protected $fillable = ['nasabah_id', 'reward_id', 'jumlah', 'status', 'tanggal_tukar'];
 
     public function nasabah()
     {
