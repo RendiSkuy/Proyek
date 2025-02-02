@@ -99,13 +99,6 @@
         <a href="/profile">Profil</a>
         <i class="fas fa-chevron-right"></i>
     </div>
-
-    <div class="settings-option">
-        <i class="fas fa-bell"></i>
-        <a href="/notifications">Notifikasi</a>
-        <i class="fas fa-chevron-right"></i>
-    </div>
-
     <div class="settings-option logout-option">
         <i class="fas fa-sign-out-alt"></i>
         <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Keluar</a>

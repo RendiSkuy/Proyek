@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
-
+    <link rel="icon"href="{{ asset('images/logo-2.png') }}" type="image/x-icon">
     <!-- Bootstrap & FontAwesome -->
     <link href="{{ asset('we-cycle-app/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -130,11 +130,12 @@
 </head>
 
 <body>
+    
     <!-- HEADER -->
     <div class="main-container">
         <div class="header">
             <h4>@yield('title')</h4>
-            <img src="{{ asset('images/default-profile.png') }}" alt="Profile">
+            <img src="{{ asset('images/original.png') }}" alt="Profile">
         </div>
 
         @yield('content')

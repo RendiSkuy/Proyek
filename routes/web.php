@@ -51,8 +51,7 @@ Route::middleware(['auth'])->group(function () {
     });
     
     
-
-
+    
     // **Riwayat Transaksi**
     Route::get('/riwayat-transaksi', [HistoryController::class, 'transactionHistory'])->name('transaction.history');
     Route::get('/riwayat-transaksi/{id}', [HistoryController::class, 'show'])->name('history.transaction.detail');

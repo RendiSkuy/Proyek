@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Sampah;
 use App\Models\KategoriSampah;
 use Illuminate\Http\Request;
+use App\Models\Notification;
 
 class SampahController extends Controller
 {
@@ -28,4 +29,5 @@ class SampahController extends Controller
 
         return view('user-app.sampah', compact('kategori', 'sampahs'));
     }
+    
 }

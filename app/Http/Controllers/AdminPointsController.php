@@ -82,7 +82,7 @@ class PointsResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPoin::route('/'),
+            'index' => Pages\ListPoins::route('/'),
             'create' => Pages\CreatePoin::route('/create'),
             'edit' => Pages\EditPoin::route('/{record}/edit'),
         ];

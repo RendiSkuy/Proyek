@@ -14,7 +14,7 @@
             border-radius: 15px 15px 0 0;
         }
 
-        /* Kategori Sampah */
+        /* Kategori Container */
         .kategori-container {
             width: 100%;
             max-width: 1100px;
@@ -23,6 +23,10 @@
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .kategori-section {
+            margin-bottom: 30px;
         }
 
         .kategori-title {
@@ -79,21 +83,23 @@
 <!-- CONTAINER -->
 <div class="kategori-container">
     @foreach ($kategoriSampahs as $kategori)
-        <h5 class="kategori-title">{{ $kategori->nama_kategori }}</h5>
-        <div class="row">
-            @forelse ($kategori->sampahs as $sampah)
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="card card-sampah">
-                        <img src="{{ asset('storage/' . $sampah->gambar) }}" alt="{{ $sampah->nama }}">
-                        <div class="card-body">
-                            <p class="harga-text">Rp.{{ number_format($sampah->harga_per_kg, 0, ',', '.') }} /Kg</p>
-                            <p class="text-muted">{{ $sampah->nama }}</p>
+        <div class="kategori-section">
+            <h5 class="kategori-title">{{ $kategori->nama_kategori }}</h5>
+            <div class="row">
+                @forelse ($kategori->sampahs as $sampah)
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card card-sampah">
+                            <img src="{{ asset('storage/' . $sampah->gambar) }}" alt="{{ $sampah->nama }}">
+                            <div class="card-body">
+                                <p class="harga-text">Rp.{{ number_format($sampah->harga_per_kg, 0, ',', '.') }} /Kg</p>
+                                <p class="text-muted">{{ $sampah->nama }}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @empty
-                <p class="text-muted">Belum ada sampah dalam kategori ini.</p>
-            @endforelse
+                @empty
+                    <p class="text-muted">Belum ada sampah dalam kategori ini.</p>
+                @endforelse
+            </div>
         </div>
     @endforeach
 </div>

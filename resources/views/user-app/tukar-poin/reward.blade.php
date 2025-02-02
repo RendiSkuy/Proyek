@@ -128,16 +128,17 @@
 <div class="reward-container">
     <h2 class="reward-header">Tukar Poin</h2>
 
-    <img src="{{ url($reward->image) }}" alt="Reward" class="reward-image">
+    <img src="{{ asset('storage/' . $reward->gambar) }}" alt="Reward" class="reward-image">
+
 
     <div class="reward-details">
         <p class="reward-name">{{ $reward->nama_reward }}</p>
         <p class="reward-points">{{ number_format($reward->poin_dibutuhkan, 0, ',', '.') }} Poin</p>
         <p class="reward-description">{{ $reward->deskripsi }}</p>
 
-        <a href="{{ url('/tukar-poin/reward/'.$reward->id.'/konfirmasi') }}" class="btn-exchange">
+        <a href="{{ route('tukar-poin.confirm', $reward->id) }}" class="btn-exchange">
             Tukarkan Poin <i class="bi bi-arrow-right-circle ms-1"></i>
-        </a>
+        </a>        
     </div>
 </div>
 

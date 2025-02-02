@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\UserApp;
 
 use App\Models\Transaksi;
+use App\Models\Poin;
+use App\Models\TukarPoin;
 use App\Models\Nasabah;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -19,14 +21,11 @@ class HistoryController extends Controller
      */
     public function transactionHistory()
     {
-        // Pastikan user sudah login
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Silakan login kembali.');
         }
 
-        // Dapatkan informasi nasabah
         $nasabah = Nasabah::where('email', Auth::user()->email)->first();
-
         if (!$nasabah) {
             return redirect()->route('login')->with('error', 'Data nasabah tidak ditemukan.');
         }
@@ -45,13 +44,42 @@ class HistoryController extends Controller
     public function show($id)
     {
         $transaction = Transaksi::with('details.sampah')->findOrFail($id);
+        $nasabah = Auth::user();
 
-        // Pastikan transaksi milik nasabah yang login
-        $nasabah = Nasabah::where('email', Auth::user()->email)->first();
-        if (!$nasabah || $transaction->nasabah_id !== $nasabah->id) {
+        if ($transaction->nasabah_id !== $nasabah->id) {
             return redirect()->route('transaction.history')->with('error', 'Akses tidak diizinkan.');
         }
 
         return view('user-app.detail-transaksi', compact('transaction'));
+    }
+
+    /**
+     * Menampilkan halaman Riwayat Poin.
+     */
+    public function poinHistory()
+    {
+        $nasabah = Auth::user();
+
+        // Ambil riwayat poin berdasarkan nasabah_id
+        $transactions = Poin::where('nasabah_id', $nasabah->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('user-app.riwayat-poin', compact('transactions'));
+    }
+
+    /**
+     * Menampilkan halaman Riwayat Tukar Poin.
+     */
+    public function tukarPoinHistory()
+    {
+        $nasabah = Auth::user();
+
+        // Ambil riwayat tukar poin berdasarkan nasabah_id
+        $tukarPoinHistory = TukarPoin::where('nasabah_id', $nasabah->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('user-app.riwayat-pesanan', compact('tukarPoinHistory'));
     }
 }

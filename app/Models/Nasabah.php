@@ -17,6 +17,7 @@ class Nasabah extends Authenticatable
         'alamat',
         'telepon',
         'foto',
+        
     ];
 
     protected $hidden = [

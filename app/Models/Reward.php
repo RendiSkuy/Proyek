@@ -9,13 +9,10 @@ class Reward extends Model
 {
     use HasFactory;
 
-    protected $fillable = 
-    ['nama_reward',
-    'deskripsi',
-    'poin_dibutuhkan',
-    'stok',
-    'kategori',
-    'gambar',
-];
-}
+    protected $fillable = ['nama_reward', 'deskripsi', 'poin_dibutuhkan', 'stok', 'kategori', 'gambar'];
 
+    public function getImageUrlAttribute()
+    {
+        return $this->gambar ? asset('storage/' . $this->gambar) : asset('images/default.png');
+    }
+}
