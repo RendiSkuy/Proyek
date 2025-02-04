@@ -8,44 +8,37 @@
     <style>
         :root {
             --primary-green: #2ECC71;
+            --secondary-green: #27AE60;
             --primary-blue: #1E90FF;
             --background-light: #F8F9FA;
             --text-dark: #333;
         }
 
-        .profile-header img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 2px solid white;
-            position: absolute;
-            top: 15px;
-            right: 15px;
-        }
-
         /* Kartu Poin */
         .point-card {
-            background: white;
+            background: var(--primary-green);
             border-radius: 12px;
-            padding: 15px;
+            padding: 20px;
+            color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-            margin: -20px auto 15px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            margin: -20px auto 20px;
             width: 90%;
+            font-weight: bold;
         }
 
         .point-card h3 {
             font-size: 20px;
-            color: var(--text-dark);
+            margin: 0;
         }
 
         /* Tombol Aksi */
         .action-buttons {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
+            justify-content: space-around;
+            margin-bottom: 20px;
         }
 
         .action-btn {
@@ -53,30 +46,32 @@
             text-align: center;
             background: var(--primary-blue);
             color: white;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             font-weight: bold;
             text-decoration: none;
-            margin: 0 5px;
+            margin: 0 10px;
             transition: 0.3s;
         }
 
         .action-btn:hover {
-            background: var(--primary-green);
+            background: var(--secondary-green);
         }
 
         /* Kategori */
         .category-title {
             font-weight: bold;
             color: var(--primary-blue);
-            margin-top: 15px;
+            margin-top: 25px;
+            font-size: 18px;
         }
 
         /* Grid Reward */
         .reward-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 10px;
         }
 
         .reward-card {
@@ -84,25 +79,27 @@
             border-radius: 12px;
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
-            padding: 10px;
+            padding: 12px;
             transition: transform 0.3s ease;
+            border: 2px solid var(--background-light);
         }
 
         .reward-card:hover {
             transform: scale(1.05);
+            border-color: var(--primary-green);
         }
 
         .reward-card img {
             width: 100%;
-            height: 90px;
+            height: 120px;
             object-fit: cover;
             border-radius: 8px;
         }
 
         .reward-card h6 {
             font-weight: bold;
-            margin: 8px 0 3px;
-            color: var(--primary-blue);
+            margin: 10px 0 5px;
+            color: var(--primary-green);
         }
 
         /* Navigasi Bawah */
@@ -116,6 +113,7 @@
             box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-around;
+            border-top: 2px solid var(--primary-green);
         }
 
         .nav-button {
@@ -135,31 +133,30 @@
 
         .nav-button:hover,
         .nav-button.active {
-            color: var(--primary-green);
+            color: var(--secondary-green);
         }
-
     </style>
 </head>
 
 <div class="point-card">
     <h3>Saldo Poin Anda:</h3>
-    <h3 class="text-primary">{{ number_format($total_poin, 0, ',', '.') }} Poin</h3>
+    <h3 class="text-light">{{ number_format($total_poin, 0, ',', '.') }} Poin</h3>
 </div>
 
 <!-- Tombol Aksi -->
 <div class="action-buttons">
-    <a href="{{ route('point.history') }}" class="action-btn">Riwayat Poin</a>
-    <a href="{{ route('tukar-point.history') }}" class="action-btn">Pesanan Saya</a>
+    <a href="{{ route('point.history') }}" class="action-btn"><i class="bi bi-clock-history"></i> Riwayat Poin</a>
+    <a href="{{ route('tukar-point.history') }}" class="action-btn"><i class="bi bi-box-seam"></i> Pesanan Saya</a>
 </div>
 
 <!-- REWARD SECTION -->
 <div class="container">
-    <h4 class="fw-bold text-dark">REWARD UNTUKMU</h4>
+    <h4 class="fw-bold text-dark"> REWARD UNTUKMU</h4>
 
-    @foreach (['Hiasan' => $hiasan, 'Peralatan' => $peralatan, 'Perlengkapan' => $perlengkapan, 'Voucher' => $voucher] as $kategori => $items)
-    <h5 class="category-title">{{ $kategori }}</h5>
+    @foreach (['Hiasan', 'Peralatan', 'Kebutuhan Keluarga'] as $kategori)
+    <h5 class="category-title"> {{ $kategori }}</h5>
     <div class="reward-list">
-        @forelse ($items as $reward)
+        @forelse ($rewards->where('kategori', $kategori) as $reward)
             <a href="{{ route('tukar-poin.show', $reward->id) }}" class="text-decoration-none">
                 <div class="reward-card">
                     <img src="{{ asset('storage/' . $reward->gambar) }}" alt="{{ $reward->nama_reward }}">
@@ -171,8 +168,7 @@
             <p class="text-muted">Belum ada hadiah dalam kategori ini.</p>
         @endforelse
     </div>
-@endforeach
-
+    @endforeach
 </div>
 
 <!-- NAVIGATION MENU -->

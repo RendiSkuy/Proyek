@@ -41,7 +41,7 @@ class RewardResource extends Resource
                         Textarea::make('deskripsi')
                             ->label('Deskripsi Reward')
                             ->maxLength(65535)
-                            ->placeholder('Contoh: Voucher Alfamart senilai Rp50.000, atau kebutuhan rumah tangga.'),
+                            ->placeholder('// Deskripsi Reward'),
 
                         TextInput::make('poin_dibutuhkan')
                             ->label('Poin yang Dibutuhkan')
@@ -58,9 +58,9 @@ class RewardResource extends Resource
                         Select::make('kategori')
                             ->label('Kategori Reward')
                             ->options([
-                                'voucher_alfamart' => 'Voucher Alfamart',
-                                'voucher_indomaret' => 'Voucher Indomaret',
-                                'kebutuhan_rumah_tangga' => 'Kebutuhan Rumah Tangga',
+                                'Hiasan' => 'Hiasan',
+                                'Peralatan' => 'Peralatan Alat Rumah Tangga',
+                                'Kebutuhan Keluarga' => 'Kebutuhan Keluarga',
                                 'lainnya' => 'Lainnya',
                             ])
                             ->required()
@@ -103,9 +103,9 @@ class RewardResource extends Resource
                 SelectFilter::make('kategori')
                     ->label('Filter Kategori')
                     ->options([
-                        'voucher_alfamart' => 'Voucher Alfamart',
-                        'voucher_indomaret' => 'Voucher Indomaret',
-                        'kebutuhan_rumah_tangga' => 'Kebutuhan Rumah Tangga',
+                        'Hiasan' => 'Hiasan',
+                        'Peralatan' => 'Peralatan Alat Rumah Tangga',
+                        'Kebutuhan' => 'Kebutuhan Keluarga',
                         'lainnya' => 'Lainnya',
                     ]),
             ])
