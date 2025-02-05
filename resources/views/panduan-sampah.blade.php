@@ -8,7 +8,7 @@
 
     <!-- Cara Kerja -->
     <div class="card shadow-sm p-4 mt-3">
-        <h4>1. Cara Kerja Bank Sampah</h4>
+        <h4>1. Cara Kerja Bank Sampah Hijau Antapani</h4>
         <p>
             Bank Hijau Antapani menyediakan layanan pengelolaan sampah bagi masyarakat. Anda tidak perlu menyetor sampah, 
             karena <strong>setiap hari Minggu</strong>, tim kami akan melakukan **penjemputan sampah** langsung dari lokasi Anda.
@@ -30,7 +30,7 @@
             <li><strong>Kaca:</strong> Botol kaca, pecahan kaca.</li>
             <li><strong>Kertas:</strong> Kardus, koran, majalah, kertas bekas.</li>
         </ul>
-        <p><strong>Catatan:</strong> Sampah organik dan sampah berbahaya tidak dapat dijemput.</p>
+        <p><strong>Catatan:</strong> Sampah organik dan sampah berbahaya tidak dapat dijemput.Jika terdapat Sampah Organik yang berbahaya akan di kembailikan kembali sampahnya</p>
     </div>
 
     <!-- Poin & Reward -->

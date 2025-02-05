@@ -112,6 +112,9 @@
                         </ul>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ route('laporan-bulanan') }}">Laporan Bulanan</a>
+                    </li>                                 
+                    <li class="nav-item">
                         <a class="nav-link {{ request()->is('profile') ? 'active' : '' }}" href="/profile">
                             <i class="fas fa-user"></i> Profil
                         </a>

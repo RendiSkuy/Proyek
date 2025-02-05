@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class Transaksi extends Model
 {
@@ -26,7 +28,11 @@ class Transaksi extends Model
     {
         return $this->belongsTo(Nasabah::class, 'nasabah_id')->select(['id', 'nama']);
     }
-
+    public function scopeForNasabah($query, $nasabah_id)
+    {
+        return $query->where('nasabah_id', $nasabah_id);
+    }
+    
     public function details()
     {
         return $this->hasMany(TransaksiDetail::class, 'transaksi_id');
@@ -64,5 +70,30 @@ class Transaksi extends Model
                 'total_poin' => $totalPoin,
             ]);
         }
+    }
+
+    /**
+     * Ambil laporan bulanan berdasarkan nasabah
+     */
+    public static function getLaporanBulanan($nasabah_id, $bulan = null)
+    {
+        $bulan = $bulan ?? Carbon::now()->format('Y-m'); // Default bulan ini
+
+        return self::where('nasabah_id', $nasabah_id)
+            ->where('tanggal', 'like', "$bulan%")
+            ->get();
+    }
+
+    /**
+     * Hitung total berat, harga, dan poin per bulan
+     */
+    public static function getTotalSetoranBulanan($nasabah_id, $bulan = null)
+    {
+        $bulan = $bulan ?? Carbon::now()->format('Y-m'); // Default bulan ini
+
+        return self::where('nasabah_id', $nasabah_id)
+            ->where('tanggal', 'like', "$bulan%")
+            ->selectRaw('SUM(total_berat) as total_berat, SUM(total_harga) as total_harga, SUM(total_poin) as total_poin')
+            ->first();
     }
 }

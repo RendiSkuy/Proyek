@@ -10,6 +10,8 @@ use App\Http\Controllers\UserApp\HistoryController;
 use App\Http\Controllers\UserApp\TukarPoinController;
 use App\Http\Controllers\UserApp\DashboardController;
 use App\Http\Controllers\UserApp\KategoriSampahController;
+use App\Http\Controllers\Admin\AdminTransactionsController; 
+use App\Http\Controllers\UserApp\LaporanBulananController;
 
 // **Landing Page**
 Route::get('/', function () {
@@ -46,8 +48,11 @@ Route::middleware(['auth'])->group(function () {
     // **Tukar Poin**
     Route::get('/tukar-poin', [TukarPoinController::class, 'index'])->name('tukar-poin');
     Route::get('/tukar-poin/reward/{id}', [TukarPoinController::class, 'show'])->name('tukar-poin.show');
+    Route::get('/tukar-poin/reward/{id}/confirm', [TukarPoinController::class, 'confirm'])->name('tukar-poin.confirm'); // ✅ Tambahkan
     Route::post('/tukar-poin/reward/{id}', [TukarPoinController::class, 'store'])->name('tukar-poin.store');
-
+    Route::get('/tukar-poin/success', [TukarPoinController::class, 'success'])->name('tukar-poin.success');
+    Route::get('/tukar-poin/failed', [TukarPoinController::class, 'failed'])->name('tukar-poin.failed');
+    
     // **Riwayat Transaksi**
     Route::get('/riwayat-transaksi', [HistoryController::class, 'transactionHistory'])->name('transaction.history');
     Route::get('/riwayat-transaksi/{id}', [HistoryController::class, 'show'])->name('history.transaction.detail');
@@ -57,4 +62,10 @@ Route::middleware(['auth'])->group(function () {
 
     // **Riwayat Tukar Poin**
     Route::get('/riwayat-pesanan', [HistoryController::class, 'tukarPoinHistory'])->name('tukar-point.history');
+
+    // **Laporan Bulanan (Admin)**
+    Route::middleware(['auth:nasabah'])->group(function () {
+        Route::get('/laporan-bulanan', [LaporanBulananController::class, 'index'])->name('laporan-bulanan');
+    });
+    
 });
