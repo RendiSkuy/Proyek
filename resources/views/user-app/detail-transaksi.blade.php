@@ -4,8 +4,9 @@
 
 @section('content')
 <div class="container">
-    <a href="{{ route('transaction.history') }}" class="btn btn-secondary mb-3">
-        <i class="bi bi-arrow-left"></i> Kembali
+    <!-- Tombol Kembali -->
+    <a href="{{ route('transaction.history') }}" class="btn btn-success mb-3">
+        <i class="bi bi-arrow-left"></i> Kembali ke Riwayat Transaksi
     </a>
 
     <div class="card shadow-sm p-3">
@@ -62,6 +63,13 @@
             <h6 class="fw-bold">Jumlah Poin Didapat</h6>
             <h6 class="fw-bold text-success">{{ number_format($transaction->total_poin, 0, ',', '.') }} pts</h6>
         </div>
+    </div>
+
+    <!-- Tombol Kembali (Hijau) -->
+    <div class="text-center mt-4">
+        <a href="{{ route('transaction.history') }}" class="btn btn-lg btn-success">
+            <i class="bi bi-arrow-left"></i> Kembali ke Riwayat Transaksi
+        </a>
     </div>
 </div>
 @endsection
