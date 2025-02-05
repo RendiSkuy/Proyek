@@ -172,7 +172,7 @@
 </div>
 
 <!-- NAVIGATION MENU -->
-<div class="navigation-menu">
+{{-- <div class="navigation-menu">
     <a href="/dashboard" class="nav-button">
         <i class="bi bi-house"></i>
         <p>Beranda</p>
@@ -189,6 +189,6 @@
         <i class="bi bi-gear"></i>
         <p>Pengaturan</p>
     </a>
-</div>
+</div> --}}
 
 @endsection

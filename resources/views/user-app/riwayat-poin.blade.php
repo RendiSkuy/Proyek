@@ -7,6 +7,11 @@
 <div class="container">
     <h3 class="fw-bold mt-3">Riwayat Poin</h3>
 
+    <!-- Tombol Kembali -->
+    <a href="{{ route('tukar-poin') }}" class="btn btn-success mb-3">
+        <i class="fas fa-arrow-left"></i> Kembali ke Tukar Poin
+    </a>
+
     @if ($transactions->isEmpty())
         <p class="text-center text-muted">Belum ada poin yang diterima.</p>
     @else

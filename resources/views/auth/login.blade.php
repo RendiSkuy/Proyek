@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Bank Hijau Antapani</title>
-
+    <link rel="icon" href="{{ asset('images/original.png') }}" type="image/x-icon">
+    
     <!-- Bootstrap & FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
     <style>
@@ -26,22 +27,27 @@
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        .login-container {
-            background: white;
-            padding: 35px;
-            border-radius: 15px;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            animation: fadeIn 0.6s ease-in-out;
+            animation: fadeIn 1s ease-in-out;
         }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-container img {
+            width: 80px;
+            margin-bottom: 15px;
         }
 
         .login-container h2 {
@@ -101,19 +107,19 @@
             text-align: center;
         }
 
-        .register-link {
+        .register-link, .forgot-password {
             text-align: center;
             font-size: 0.9rem;
             margin-top: 15px;
         }
 
-        .register-link a {
+        .register-link a, .forgot-password a {
             color: var(--primary-green);
             text-decoration: none;
             font-weight: bold;
         }
 
-        .register-link a:hover {
+        .register-link a:hover, .forgot-password a:hover {
             text-decoration: underline;
         }
     </style>
@@ -121,6 +127,7 @@
 
 <body>
     <div class="login-container">
+        <img src="{{ asset('images/original.png') }}" alt="Bank Hijau Antapani Logo">
         <h2>Login Nasabah</h2>
 
         @if(session('loginError'))
@@ -141,7 +148,5 @@
 
             <button type="submit" class="btn-login">Masuk</button>
         </form>
-
-    </div>
 </body>
 </html>

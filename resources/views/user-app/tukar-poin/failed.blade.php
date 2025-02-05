@@ -125,7 +125,7 @@
 </div>
 
 <!-- NAVIGATION MENU -->
-<div class="navigation-menu">
+{{-- <div class="navigation-menu">
     <a class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}" href="/dashboard">
         <i class="bi bi-house"></i>
         <p>Beranda</p>
@@ -142,5 +142,5 @@
         <i class="bi bi-gear"></i>
         <p>Pengaturan</p>
     </a>
-</div>
+</div> --}}
 @endsection

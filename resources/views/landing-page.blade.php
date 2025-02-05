@@ -8,6 +8,7 @@
     <!-- Bootstrap & FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" href="{{ asset('images/original.png') }}" type="image/x-icon">
 
     <style>
         /* Warna & Tema */
@@ -48,14 +49,13 @@
 
         /* Hero Section */
         .hero-section {
-            height: 85vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
             color: white;
-            padding: 20px;
+            padding: 50px 20px;
         }
 
         .hero-section h1 {
@@ -82,41 +82,36 @@
             background-color: #0056b3;
         }
 
-        /* Fitur Section */
-        .features {
-            background-color: #E8F5E9;
-            padding: 80px 0;
+        /* Achievement Section */
+        .achievement-section {
+            background: #1E90FF;
+            color: white;
             text-align: center;
+            padding: 50px 20px;
         }
 
-        .features h2 {
-            font-size: 2.5rem;
+        .achievement-section h2 {
             font-weight: bold;
-            color: var(--primary-green);
-            margin-bottom: 40px;
         }
 
-        .features .card {
-            border: none;
-            border-radius: 15px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background: #fff;
+        .achievement-item {
+            margin: 20px 0;
         }
 
-        .features .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        /* Informasi Setoran Sampah */
+        .info-section {
+            background: white;
+            padding: 50px 20px;
         }
 
-        .features .card i {
-            color: #1E90FF;
-            margin-bottom: 15px;
+        .info-section h3 {
+            color: var(--primary-blue);
+            font-weight: bold;
+            margin-bottom: 30px;
         }
 
-        .features .card h3 {
-            color: #27AE60;
-            font-size: 1.5rem;
+        .info-section p {
+            font-size: 1rem;
         }
 
         /* Footer */
@@ -127,10 +122,21 @@
             text-align: center;
         }
 
-        footer p {
-            margin: 0;
-            font-size: 0.9rem;
+        .social-icons {
+            margin-top: 10px;
         }
+
+        .social-icons a {
+            color: white;
+            margin: 0 10px;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #FFD700;
+        }
+
     </style>
 </head>
 <body>
@@ -156,37 +162,53 @@
         <div class="container">
             <h1>Selamat Datang di Bank Hijau Antapani</h1>
             <p>Menukarkan sampah menjadi poin yang bisa ditukarkan dengan hadiah menarik.</p>
-            <a href="/login" class="btn btn-lg">Mulai Sekarang</a>
+            <a href="{{ route('panduan.sampah') }}" class="btn btn-lg">Mulai Sekarang</a>
         </div>
     </div>
 
-    <!-- Fitur Kami -->
-    <section class="features">
+    <!-- Achievement Section -->
+    <div class="achievement-section">
         <div class="container">
-            <h2>Fitur Kami</h2>
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="card h-100 text-center p-4">
-                        <i class="fas fa-recycle fa-3x"></i>
-                        <h3 class="mt-3">Tukar Sampah</h3>
-                        <p>Tukarkan sampah Anda dengan poin yang dapat ditukar dengan hadiah.</p>
-                    </div>
+            <h2>ACHIEVEMENT</h2>
+            <div class="row">
+                <div class="col-md-4 achievement-item">
+                    <i class="fas fa-users fa-3x"></i>
+                    <h3>1000</h3>
+                    <p>User Baru</p>
                 </div>
-                <div class="col-lg-4">
-                    <div class="card h-100 text-center p-4">
-                        <i class="fas fa-gift fa-3x"></i>
-                        <h3 class="mt-3">Dapatkan Reward</h3>
-                        <p>Tukarkan poin Anda dengan berbagai hadiah menarik.</p>
-                    </div>
+                <div class="col-md-4 achievement-item">
+                    <i class="fas fa-recycle fa-3x"></i>
+                    <h3>10 Ton</h3>
+                    <p>Sampah Dikelola</p>
                 </div>
-                <div class="col-lg-4">
-                    <div class="card h-100 text-center p-4">
-                        <i class="fas fa-leaf fa-3x"></i>
-                        <h3 class="mt-3">Jaga Lingkungan</h3>
-                        <p>Kontribusi Anda membantu menjaga lingkungan lebih bersih dan berkelanjutan.</p>
-                    </div>
+                <div class="col-md-4 achievement-item">
+                    <i class="fas fa-truck fa-3x"></i>
+                    <h3>Setiap Minggu</h3>
+                    <p>Pengambilan Sampah</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Info Setoran Sampah -->
+    <section class="info-section">
+        <div class="container">
+            <h3>Prosedur Penjemputan Sampah oleh Bank Hijau Antapani</h3>
+            <p><strong>1. Sampah Dijemput Setiap Hari Minggu</strong></p>
+            <p>Pihak Bank Sampah akan menjemput sampah langsung dari rumah Anda.</p>
+
+            <p><strong>2. Proses Penimbangan Sampah</strong></p>
+            <p>Setelah diambil, sampah akan ditimbang untuk menentukan jumlah poin yang diperoleh.</p>
+
+            <p><strong>3. Nasabah Menerima Poin</strong></p>
+            <p>Setiap kilogram sampah yang disetor akan dikonversi menjadi poin.</p>
+
+            <p><strong>4. Tukarkan Poin dengan Reward</strong></p>
+            <p>Poin yang terkumpul bisa ditukarkan dengan hadiah menarik melalui sistem aplikasi kami.</p>
+
+            <p class="text-center">
+                <a href="#" class="text-primary fw-bold">Siap Menjadi Bagian dari Bank Hijau Antapani?</a>
+            </p>
         </div>
     </section>
 
@@ -194,10 +216,14 @@
     <footer>
         <div class="container">
             <p>&copy; 2025 Bank Hijau Antapani. All rights reserved.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
         </div>
     </footer>
 
-    <!-- Bootstrap Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

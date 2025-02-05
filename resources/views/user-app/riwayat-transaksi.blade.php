@@ -6,6 +6,11 @@
 <div class="container">
     <h3 class="fw-bold mt-3">Riwayat Transaksi</h3>
 
+    <!-- Tombol Kembali ke Dashboard -->
+    <a href="{{ route('dashboard') }}" class="btn btn-success mb-3">
+        <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+    </a>
+
     @if ($transactions->isEmpty())
         <p class="text-center text-muted">Belum ada transaksi.</p>
     @else

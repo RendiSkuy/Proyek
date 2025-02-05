@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
-    <link rel="icon"href="{{ asset('images/logo-2.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/original.png') }}" type="image/x-icon">
+    
     <!-- Bootstrap & FontAwesome -->
     <link href="{{ asset('we-cycle-app/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -28,7 +29,6 @@
             background: var(--background-gradient);
             color: var(--text-dark);
             margin: 0;
-            padding-bottom: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -37,7 +37,7 @@
         /* Main Container */
         .main-container {
             width: 100%;
-            max-width: 1100px; /* Menyesuaikan agar enak dilihat di desktop */
+            max-width: 1100px;
             background: white;
             padding: 20px;
             border-radius: 15px;
@@ -45,65 +45,31 @@
             margin-top: 25px;
         }
 
-        /* HEADER */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        /* Navbar */
+        .navbar-custom {
             background: var(--background-gradient);
-            color: var(--text-light);
-            padding: 20px;
-            border-radius: 15px 15px 0 0;
+            padding: 15px;
+            border-radius: 0 0 15px 15px;
         }
 
-        .header img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid white;
-        }
-
-        .header h4 {
-            margin: 0;
+        .navbar-brand {
             font-weight: bold;
-            font-size: 22px;
+            color: white;
+            font-size: 20px;
         }
 
-        /* NAVIGATION MENU */
-        .navigation-menu {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-weight: 500;
+        }
+
+        .dropdown-menu {
             background: white;
-            padding: 10px 0;
-            box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.15);
-            display: flex;
-            justify-content: space-around;
-            border-top: 3px solid var(--primary-green);
         }
 
-        .nav-button {
-            text-align: center;
-            text-decoration: none;
-            color: var(--primary-blue);
-            flex: 1;
-            padding: 10px 0;
-            transition: 0.3s ease-in-out;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .nav-button i {
-            font-size: 22px;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .nav-button:hover,
-        .nav-button.active {
-            color: var(--secondary-blue);
+        .dropdown-item:hover {
+            background: var(--primary-green);
+            color: white;
         }
 
         /* RESPONSIVE DESIGN */
@@ -113,52 +79,60 @@
                 border-radius: 0;
                 padding: 15px;
             }
-
-            .navigation-menu {
-                padding: 8px 0;
-            }
-
-            .nav-button {
-                font-size: 12px;
-            }
-
-            .nav-button i {
-                font-size: 20px;
-            }
         }
     </style>
 </head>
 
 <body>
-    
-    <!-- HEADER -->
-    <div class="main-container">
-        <div class="header">
-            <h4>@yield('title')</h4>
-            <img src="{{ asset('images/original.png') }}" alt="Profile">
-        </div>
 
+    <!-- Navbar hanya muncul di halaman selain Panduan Sampah -->
+    @if (!request()->is('panduan-sampah'))
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="#">Bank Hijau Antapani</a>
+            
+            <!-- Toggle Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="/dashboard">
+                            <i class="fas fa-home"></i> Beranda
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="kategoriDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-recycle"></i> Kategori Sampah
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/kategori-sampah">Semua Kategori</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('profile') ? 'active' : '' }}" href="/profile">
+                            <i class="fas fa-user"></i> Profil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('settings') ? 'active' : '' }}" href="/settings">
+                            <i class="fas fa-cog"></i> Pengaturan
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    @endif
+
+    <!-- MAIN CONTENT -->
+    <div class="main-container">
         @yield('content')
     </div>
 
-    <!-- FOOTER NAVIGATION -->
-    <div class="navigation-menu">
-        <a href="/dashboard" class="nav-button {{ request()->is('dashboard') ? 'active' : '' }}">
-            <i class="fas fa-home"></i>
-            <p>Beranda</p>
-        </a>
-        <a href="/kategori-sampah" class="nav-button {{ request()->is('kategori-sampah') ? 'active' : '' }}">
-            <i class="fas fa-recycle"></i>
-            <p>Kategori</p>
-        </a>
-        <a href="/profile" class="nav-button {{ request()->is('profile') ? 'active' : '' }}">
-            <i class="fas fa-user"></i>
-            <p>Profil</p>
-        </a>
-        <a href="/settings" class="nav-button {{ request()->is('settings') ? 'active' : '' }}">
-            <i class="fas fa-cog"></i>
-            <p>Pengaturan</p>
-        </a>
-    </div>
+    <!-- Bootstrap Scripts -->
+    <script src="{{ asset('we-cycle-app/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>
