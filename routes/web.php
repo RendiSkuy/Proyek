@@ -12,6 +12,8 @@ use App\Http\Controllers\UserApp\DashboardController;
 use App\Http\Controllers\UserApp\KategoriSampahController;
 use App\Http\Controllers\Admin\AdminTransactionsController; 
 use App\Http\Controllers\UserApp\LaporanBulananController;
+use App\Http\Controllers\ExportLaporanBulananController;
+
 
 // **Landing Page**
 Route::get('/', function () {
@@ -66,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
     // **Laporan Bulanan (Admin)**
     Route::middleware(['auth:nasabah'])->group(function () {
         Route::get('/laporan-bulanan', [LaporanBulananController::class, 'index'])->name('laporan-bulanan');
+        Route::get('/laporan-bulanan/export-pdf', [ExportLaporanBulananController::class, 'export'])->name('laporan-bulanan.export');
     });
     
 });
